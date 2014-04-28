@@ -1,0 +1,11 @@
+<project name="dependencies" default="download">
+
+	<property name="lib.dir" value="lib" />
+
+	<target name="download" description="--> download external dependencies">
+		<mkdir dir="${lib.dir}" />
+		<get src="http://repo1.maven.org/maven2/com/beust/jcommander/1.35/jcommander-1.35.jar" dest="${lib.dir}" />
+		<get src="http://repo1.maven.org/maven2/com/beust/jcommander/1.35/jcommander-1.35-sources.jar" dest="${lib.dir}" />
+		<get src="http://repo1.maven.org/maven2/com/beust/jcommander/1.35/jcommander-1.35-javadoc.jar" dest="${lib.dir}" />
+	</target>
+</project>
