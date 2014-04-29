@@ -7,6 +7,7 @@ import org.metaborg.spoofax.benchmark.core.collect.DataCollector;
 import org.metaborg.spoofax.benchmark.core.collect.DataSerializer;
 import org.metaborg.spoofax.benchmark.core.collect.RawData;
 import org.metaborg.spoofax.benchmark.core.export.CSVExporter;
+import org.metaborg.spoofax.benchmark.core.export.ImageExporter;
 import org.metaborg.spoofax.benchmark.core.process.DataProcessor;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
 import org.spoofax.interpreter.library.IOAgent;
@@ -67,15 +68,8 @@ public final class Facade {
 		exporter.export(data, exportDirectory);
 	}
 
-	public void exportCSV(String languageDir, String languageName, String projectDir, File exportDirectory)
-		throws IllegalArgumentException, IllegalAccessException, IOException {
-		final CSVExporter exporter = new CSVExporter();
-		exporter.export(process(languageDir, languageName, projectDir), exportDirectory);
-	}
-
-	public void exportCSVFromSerialized(File serializedDirectory, File exportDirectory)
-		throws IllegalArgumentException, IllegalAccessException, IOException {
-		final CSVExporter exporter = new CSVExporter();
-		exporter.export(processFromSerialized(serializedDirectory), exportDirectory);
+	public void exportImage(ProcessedData data, File exportDirectory) throws IOException {
+		final ImageExporter exporter = new ImageExporter();
+		exporter.export(data, exportDirectory);
 	}
 }

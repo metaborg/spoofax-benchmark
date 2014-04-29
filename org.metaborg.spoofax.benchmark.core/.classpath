@@ -9,5 +9,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.interpreter.library.index"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.jsglr"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.metaborg.sunshine"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.17/lib/jcommon-1.0.21.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.17/lib/jfreechart-1.0.17.jar" sourcepath="lib/jfreechart-1.0.17/source"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

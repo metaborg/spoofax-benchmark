@@ -67,6 +67,7 @@ public class Main {
 							break;
 						}
 						case "image": {
+							facade.exportImage(data, new File(cmdExport.outputDirectory));
 							break;
 						}
 					}

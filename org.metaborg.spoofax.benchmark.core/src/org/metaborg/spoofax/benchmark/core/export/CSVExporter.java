@@ -18,14 +18,14 @@ public final class CSVExporter {
 		IllegalAccessException {
 		FileUtils.forceMkdir(directory);
 		
-		writeCSVPrims(data.time, new File(directory, "time.csv"));
-		writeCSVPrims(data.index, new File(directory, "index.csv"));
-		writeCSVMultiset(data.index.numKinds, new File(directory, "index-kinds.csv"));
-		writeCSVPrims(data.taskEngine, new File(directory, "taskengine.csv"));
-		writeCSVMultiset(data.taskEngine.numKinds, new File(directory, "taskengine-kinds.csv"));
+		writePrims(data.time, new File(directory, "time.csv"));
+		writePrims(data.index, new File(directory, "index.csv"));
+		writeMultiset(data.index.numKinds, new File(directory, "index-kinds.csv"));
+		writePrims(data.taskEngine, new File(directory, "taskengine.csv"));
+		writeMultiset(data.taskEngine.numKinds, new File(directory, "taskengine-kinds.csv"));
 	}
 
-	private void writeCSVPrims(Object object, File file) throws IllegalArgumentException, IllegalAccessException,
+	private void writePrims(Object object, File file) throws IllegalArgumentException, IllegalAccessException,
 		IOException {
 		final Map<String, Object> values = Maps.newLinkedHashMap();
 		for(Field field : object.getClass().getFields()) {
@@ -35,18 +35,18 @@ public final class CSVExporter {
 			else if(type.equals(double.class))
 				values.put(field.getName(), field.getDouble(object));
 		}
-		writeCSV(values, file);
+		write(values, file);
 	}
 	
-	private void writeCSVMultiset(Multiset<String> multiset, File file) throws IOException {
+	private void writeMultiset(Multiset<String> multiset, File file) throws IOException {
 		final Map<String, Object> values = Maps.newLinkedHashMap();
 		for(Entry<String> entry : multiset.entrySet()) {
 			values.put(entry.getElement(), entry.getCount());
 		}
-		writeCSV(values, file);
+		write(values, file);
 	}
 
-	private void writeCSV(Map<String, Object> values, File file) throws IOException {
+	private void write(Map<String, Object> values, File file) throws IOException {
 		file.createNewFile();
 		final PrintWriter writer = new PrintWriter(file);
 		try {

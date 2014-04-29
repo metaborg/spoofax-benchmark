@@ -1,0 +1,10 @@
+<project name="dependencies" default="download">
+
+	<property name="lib.dir" value="lib" />
+
+	<target name="download" description="--> download external dependencies">
+		<mkdir dir="${lib.dir}" />
+		<get src="http://downloads.sourceforge.net/project/jfreechart/1.%20JFreeChart/1.0.17/jfreechart-1.0.17.zip?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fjfreechart%2Ffiles%2F1.%2520JFreeChart%2F1.0.17%2F&amp;ts=1398778266&amp;use_mirror=heanet" dest="${lib.dir}/jfreechart-1.0.17.zip" />
+		<unzip src="${lib.dir}/jfreechart-1.0.17.zip" dest="${lib.dir}"/>
+	</target>
+</project>

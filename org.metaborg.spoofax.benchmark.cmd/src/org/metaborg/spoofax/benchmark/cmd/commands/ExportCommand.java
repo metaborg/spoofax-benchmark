@@ -32,7 +32,7 @@ public class ExportCommand {
 	public String outputDirectory;
 
 	@Parameter(names = { "--outfmt", "-f" }, required = true,
-		description = "Format of the exporter, choose from: print, csv, image.")
+		description = "Format of the exporter, choose from: csv, image.")
 	public String outputFormat;
 
 

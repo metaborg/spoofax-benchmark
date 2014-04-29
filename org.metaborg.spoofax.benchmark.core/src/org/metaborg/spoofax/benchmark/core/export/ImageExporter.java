@@ -1,0 +1,63 @@
+package org.metaborg.spoofax.benchmark.core.export;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.util.SortOrder;
+import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multiset.Entry;
+
+public class ImageExporter {
+	public void export(ProcessedData data, File directory) throws IOException {
+		FileUtils.forceMkdir(directory);
+
+		writeMultisetPie(data.index.numKinds, new File(directory, "index-kinds-pie.png"), "Index entry kinds", "0", "0%");
+		writeMultisetPie(data.taskEngine.numKinds, new File(directory, "taskengine-kinds-pie.png"),
+			"Task engine instruction kinds", "0", "0%");
+
+		final Map<String, Object> timeMap = Maps.newLinkedHashMap();
+		timeMap.put("Parse", data.time.parseTime);
+		timeMap.put("Collect", data.time.collectTime);
+		timeMap.put("Perform", data.time.performTime);
+		timeMap.put("Persist index", data.time.indexPersistTime);
+		timeMap.put("Persist task engine", data.time.taskPersistTime);
+		writeMapPie(timeMap, new File(directory, "time-pie.png"), "Absolute time taken for each phase", "0.000s", "0%");
+	}
+
+	private void
+		writeMultisetPie(Multiset<String> multiset, File file, String title, String absFormat, String perFormat)
+			throws IOException {
+		final Map<String, Object> map = Maps.newLinkedHashMap();
+		for(Entry<String> entry : multiset.entrySet()) {
+			map.put(entry.getElement(), entry.getCount());
+		}
+		writeMapPie(map, file, title, absFormat, perFormat);
+	}
+
+	private void writeMapPie(Map<String, Object> map, File file, String title, String absFormat, String perFormat)
+		throws IOException {
+		final DefaultPieDataset dataset = new DefaultPieDataset();
+		for(java.util.Map.Entry<String, Object> entry : map.entrySet()) {
+			dataset.setValue(entry.getKey(), (Number) entry.getValue());
+		}
+		dataset.sortByValues(SortOrder.DESCENDING);
+		final JFreeChart chart = ChartFactory.createPieChart(title, dataset, true, true, false);
+		final PiePlot plot = (PiePlot) chart.getPlot();
+		plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1} ({2})", new DecimalFormat(absFormat),
+			new DecimalFormat(perFormat)));
+		ChartUtilities.saveChartAsPNG(file, chart, 800, 600);
+		// TODO: SVG output: http://dolf.trieschnigg.nl/jfreechart/
+	}
+}
