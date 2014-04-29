@@ -10,18 +10,22 @@ import org.apache.commons.io.FileUtils;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multiset.Entry;
 
 public final class CSVExporter {
 	public void export(ProcessedData data, File directory) throws IOException, IllegalArgumentException,
 		IllegalAccessException {
 		FileUtils.forceMkdir(directory);
 		
-		writeCSV(data.time, new File(directory, "time.csv"));
-		writeCSV(data.index, new File(directory, "index.csv"));
-		writeCSV(data.taskEngine, new File(directory, "taskengine.csv"));
+		writeCSVPrims(data.time, new File(directory, "time.csv"));
+		writeCSVPrims(data.index, new File(directory, "index.csv"));
+		writeCSVMultiset(data.index.numKinds, new File(directory, "index-kinds.csv"));
+		writeCSVPrims(data.taskEngine, new File(directory, "taskengine.csv"));
+		writeCSVMultiset(data.taskEngine.numKinds, new File(directory, "taskengine-kinds.csv"));
 	}
 
-	private void writeCSV(Object object, File file) throws IllegalArgumentException, IllegalAccessException,
+	private void writeCSVPrims(Object object, File file) throws IllegalArgumentException, IllegalAccessException,
 		IOException {
 		final Map<String, Object> values = Maps.newLinkedHashMap();
 		for(Field field : object.getClass().getFields()) {
@@ -30,6 +34,14 @@ public final class CSVExporter {
 				values.put(field.getName(), field.getLong(object));
 			else if(type.equals(double.class))
 				values.put(field.getName(), field.getDouble(object));
+		}
+		writeCSV(values, file);
+	}
+	
+	private void writeCSVMultiset(Multiset<String> multiset, File file) throws IOException {
+		final Map<String, Object> values = Maps.newLinkedHashMap();
+		for(Entry<String> entry : multiset.entrySet()) {
+			values.put(entry.getElement(), entry.getCount());
 		}
 		writeCSV(values, file);
 	}
