@@ -23,16 +23,18 @@ public final class CSVExporter {
 
 	private void writeCSV(Object object, File file) throws IllegalArgumentException, IllegalAccessException,
 		IOException {
-		final Map<String, Long> values = Maps.newHashMap();
+		final Map<String, Object> values = Maps.newLinkedHashMap();
 		for(Field field : object.getClass().getFields()) {
 			final Class<?> type = field.getType();
 			if(type.equals(long.class))
 				values.put(field.getName(), field.getLong(object));
+			else if(type.equals(double.class))
+				values.put(field.getName(), field.getDouble(object));
 		}
 		writeCSV(values, file);
 	}
 
-	private void writeCSV(Map<String, Long> values, File file) throws IOException {
+	private void writeCSV(Map<String, Object> values, File file) throws IOException {
 		file.createNewFile();
 		final PrintWriter writer = new PrintWriter(file);
 		try {
@@ -49,10 +51,10 @@ public final class CSVExporter {
 			builder.setLength(0);
 
 			first = true;
-			for(Long value : values.values()) {
+			for(Object value : values.values()) {
 				if(!first)
 					builder.append(", ");
-				builder.append(value);
+				builder.append(value.toString());
 				first = false;
 			}
 			writer.println(builder.toString());

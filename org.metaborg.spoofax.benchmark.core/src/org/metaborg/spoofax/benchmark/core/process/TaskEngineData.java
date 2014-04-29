@@ -8,6 +8,13 @@ public final class TaskEngineData {
 	public Multiset<String> numKinds = HashMultiset.create();
 
 	public long numSources;
+	
+	public long tasksRemoved;
+	public long tasksAdded;
+	public long tasksInvalidated;
+	public long evaluatedTasks;
+	public long skippedTasks;
+	public long unevaluatedTasks;
 
 	public long memSize;
 	public long diskSize;

@@ -16,7 +16,15 @@ public final class DataProcessor {
 	}
 
 	private TimeData processTimeData(RawData rawData) {
-		return new TimeData();
+		final TimeData data = new TimeData();
+		
+		data.parseTime = rawData.parseTime;
+		data.collectTime = rawData.collectTime;
+		data.performTime = rawData.performTime;
+		data.indexPersistTime = rawData.indexPersistTime;
+		data.taskPersistTime = rawData.taskPersistTime;
+		
+		return data;
 	}
 
 	private IndexData processIndexData(RawData rawData) {
@@ -29,6 +37,9 @@ public final class DataProcessor {
 		}
 
 		data.numPartitions = Iterables.size(rawData.index.getAllPartitions());
+		
+		data.indexEntriesAdded = rawData.indexEntriesAdded;
+		data.indexEntriesRemoved = rawData.indexEntriesRemoved;
 
 		// TODO: memory and disk sizes.
 
@@ -45,6 +56,13 @@ public final class DataProcessor {
 		}
 
 		data.numSources = Iterables.size(rawData.taskEngine.getAllSources());
+		
+		data.tasksRemoved = rawData.tasksRemoved;
+		data.tasksAdded = rawData.tasksAdded;
+		data.tasksInvalidated = rawData.tasksInvalidated;
+		data.evaluatedTasks = rawData.evaluatedTasks;
+		data.skippedTasks = rawData.skippedTasks;
+		data.unevaluatedTasks = rawData.unevaluatedTasks;
 
 		// TODO: memory and disk sizes.
 

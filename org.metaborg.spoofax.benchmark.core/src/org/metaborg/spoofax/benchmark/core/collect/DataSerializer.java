@@ -37,6 +37,9 @@ public final class DataSerializer {
 
 		// TODO: deserialize time
 
-		return new RawData(index, taskEngine, 0);
+		final RawData data = new RawData();
+		data.index = index;
+		data.taskEngine = taskEngine;
+		return data;
 	}
 }

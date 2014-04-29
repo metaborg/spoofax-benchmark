@@ -1,7 +1,9 @@
 package org.metaborg.spoofax.benchmark.core.process;
 
 public final class TimeData {
-	public long parseTime;
-	public long collectTime;
-	public long performTime;
+	public double parseTime;
+	public double collectTime;
+	public double performTime;
+	public double indexPersistTime;
+	public double taskPersistTime;
 }
