@@ -3,8 +3,8 @@ package org.metaborg.spoofax.benchmark.core;
 import java.io.File;
 import java.io.IOException;
 
-import org.metaborg.spoofax.benchmark.core.collect.DataCollector;
-import org.metaborg.spoofax.benchmark.core.collect.DataSerializer;
+import org.metaborg.spoofax.benchmark.core.collect.RawDataCollector;
+import org.metaborg.spoofax.benchmark.core.collect.RawDataSerializer;
 import org.metaborg.spoofax.benchmark.core.collect.RawData;
 import org.metaborg.spoofax.benchmark.core.export.CSVExporter;
 import org.metaborg.spoofax.benchmark.core.export.ImageExporter;
@@ -27,12 +27,12 @@ public final class Facade {
 
 
 	public RawData collect(String languageDir, String languageName, String projectDir) {
-		final DataCollector collector = new DataCollector(languageDir, languageName, projectDir, agent, termFactory);
+		final RawDataCollector collector = new RawDataCollector(languageDir, languageName, projectDir, agent, termFactory);
 		return collector.collect();
 	}
 
 	public void serialize(RawData data, File serializeDirectory) throws IOException {
-		final DataSerializer serializer = new DataSerializer(termFactory, agent);
+		final RawDataSerializer serializer = new RawDataSerializer(termFactory, agent);
 		serializer.serialize(data, serializeDirectory);
 	}
 
@@ -42,8 +42,8 @@ public final class Facade {
 		serialize(collect(languageDir, languageName, projectDir), serializeDirectory);
 	}
 
-	public RawData deserialize(File serializedDirectory) {
-		final DataSerializer serializer = new DataSerializer(termFactory, agent);
+	public RawData deserialize(File serializedDirectory) throws Exception {
+		final RawDataSerializer serializer = new RawDataSerializer(termFactory, agent);
 		return serializer.deserialize(serializedDirectory);
 	}
 
@@ -57,7 +57,7 @@ public final class Facade {
 		return process(collect(languageDir, languageName, projectDir));
 	}
 
-	public ProcessedData processFromSerialized(File serializedDirectory) {
+	public ProcessedData processFromSerialized(File serializedDirectory) throws Exception {
 		return process(deserialize(serializedDirectory));
 	}
 

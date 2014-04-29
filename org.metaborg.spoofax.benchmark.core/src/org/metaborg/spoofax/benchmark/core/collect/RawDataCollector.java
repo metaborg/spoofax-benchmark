@@ -23,13 +23,13 @@ import org.spoofax.interpreter.terms.ITermFactory;
 import com.beust.jcommander.JCommander;
 import com.google.common.collect.Iterables;
 
-public final class DataCollector {
+public final class RawDataCollector {
 	private final String languageName;
 	private final String projectDir;
 	private final IOAgent agent;
 	private final ITermFactory termFactory;
 
-	public DataCollector(String languageDir, String languageName, String projectDir, IOAgent agent,
+	public RawDataCollector(String languageDir, String languageName, String projectDir, IOAgent agent,
 		ITermFactory termFactory) {
 		this.languageName = languageName;
 		this.projectDir = projectDir;

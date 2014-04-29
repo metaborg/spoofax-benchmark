@@ -22,7 +22,7 @@ public class ExportCommand {
 
 
 	@Parameter(
-		names = { "--inputdir", "-i" },
+		names = { "--indir", "-i" },
 		description = "Directory where collected results can be found. Incompatible with --langdir, --langname, and --projdir.")
 	public String inputDirectory;
 
