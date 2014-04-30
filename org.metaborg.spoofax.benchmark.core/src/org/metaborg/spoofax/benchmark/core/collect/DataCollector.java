@@ -23,13 +23,13 @@ import org.spoofax.interpreter.terms.ITermFactory;
 import com.beust.jcommander.JCommander;
 import com.google.common.collect.Iterables;
 
-public final class RawDataCollector {
+public final class DataCollector {
 	private final String languageName;
 	private final String projectDir;
 	private final IOAgent agent;
 	private final ITermFactory termFactory;
 
-	public RawDataCollector(String languageDir, String languageName, String projectDir, IOAgent agent,
+	public DataCollector(String languageDir, String languageName, String projectDir, IOAgent agent,
 		ITermFactory termFactory) {
 		this.languageName = languageName;
 		this.projectDir = projectDir;
@@ -50,7 +50,7 @@ public final class RawDataCollector {
 		org.metaborg.sunshine.drivers.Main.initEnvironment(params);
 	}
 
-	public RawData collect() {
+	public CollectedData collect() {
 		IndexManager.getInstance().unloadIndex(projectDir, agent);
 		TaskManager.getInstance().unloadTaskEngine(projectDir, agent);
 
@@ -67,7 +67,7 @@ public final class RawDataCollector {
 		if(Iterables.isEmpty(analyzerResults))
 			throw new RuntimeException("Could not analyze files.");
 
-		final RawData data = new RawData();
+		final CollectedData data = new CollectedData();
 
 		for(AnalysisResult result : analyzerResults) {
 			final FileData fileData = new FileData();
@@ -92,11 +92,11 @@ public final class RawDataCollector {
 		data.skippedTasks = result.getSubterm(2).getSubterm(4).getSubtermCount();
 		data.unevaluatedTasks = result.getSubterm(2).getSubterm(5).getSubtermCount();
 
-		data.parseTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(0));
-		data.collectTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(1));
-		data.performTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(2));
-		data.indexPersistTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(3));
-		data.taskPersistTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(4));
+		data.time.parseTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(0));
+		data.time.collectTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(1));
+		data.time.performTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(2));
+		data.time.indexPersistTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(3));
+		data.time.taskPersistTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(4));
 
 		return data;
 	}

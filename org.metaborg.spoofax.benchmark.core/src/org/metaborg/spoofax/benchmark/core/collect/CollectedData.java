@@ -8,7 +8,7 @@ import org.spoofax.interpreter.library.index.IIndex;
 
 import com.google.common.collect.Lists;
 
-public final class RawData implements Serializable {
+public final class CollectedData implements Serializable {
 	private static final long serialVersionUID = 5478160852945519151L;
 
 	public final Collection<FileData> files = Lists.newLinkedList();
@@ -25,9 +25,5 @@ public final class RawData implements Serializable {
 	public long skippedTasks;
 	public long unevaluatedTasks;
 
-	public double parseTime;
-	public double collectTime;
-	public double performTime;
-	public double indexPersistTime;
-	public double taskPersistTime;
+	public final TimeData time = new TimeData();
 }

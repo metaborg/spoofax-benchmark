@@ -1,13 +1,14 @@
 package org.metaborg.spoofax.benchmark.core.process;
 
 import org.metaborg.runtime.task.ITask;
-import org.metaborg.spoofax.benchmark.core.collect.RawData;
+import org.metaborg.spoofax.benchmark.core.collect.CollectedData;
+import org.metaborg.spoofax.benchmark.core.collect.TimeData;
 import org.spoofax.interpreter.library.index.IndexEntry;
 
 import com.google.common.collect.Iterables;
 
 public final class DataProcessor {
-	public ProcessedData process(RawData rawData) {
+	public ProcessedData process(CollectedData rawData) {
 		final TimeData timeData = processTimeData(rawData);
 		final IndexData indexData = processIndexData(rawData);
 		final TaskEngineData taskEngineData = processTaskEngineData(rawData);
@@ -15,19 +16,11 @@ public final class DataProcessor {
 		return new ProcessedData(timeData, indexData, taskEngineData);
 	}
 
-	private TimeData processTimeData(RawData rawData) {
-		final TimeData data = new TimeData();
-		
-		data.parseTime = rawData.parseTime;
-		data.collectTime = rawData.collectTime;
-		data.performTime = rawData.performTime;
-		data.indexPersistTime = rawData.indexPersistTime;
-		data.taskPersistTime = rawData.taskPersistTime;
-		
-		return data;
+	private TimeData processTimeData(CollectedData rawData) {
+		return rawData.time;
 	}
 
-	private IndexData processIndexData(RawData rawData) {
+	private IndexData processIndexData(CollectedData rawData) {
 		final IndexData data = new IndexData();
 		final Iterable<IndexEntry> entries = rawData.index.getAll();
 
@@ -46,7 +39,7 @@ public final class DataProcessor {
 		return data;
 	}
 
-	private TaskEngineData processTaskEngineData(RawData rawData) {
+	private TaskEngineData processTaskEngineData(CollectedData rawData) {
 		final TaskEngineData data = new TaskEngineData();
 		final Iterable<ITask> tasks = rawData.taskEngine.getTasks();
 

@@ -3,13 +3,14 @@ package org.metaborg.spoofax.benchmark.core;
 import java.io.File;
 import java.io.IOException;
 
-import org.metaborg.spoofax.benchmark.core.collect.RawDataCollector;
-import org.metaborg.spoofax.benchmark.core.collect.RawDataSerializer;
-import org.metaborg.spoofax.benchmark.core.collect.RawData;
+import org.metaborg.spoofax.benchmark.core.collect.CollectedData;
+import org.metaborg.spoofax.benchmark.core.collect.CollectedDataSerializer;
+import org.metaborg.spoofax.benchmark.core.collect.DataCollector;
 import org.metaborg.spoofax.benchmark.core.export.CSVExporter;
 import org.metaborg.spoofax.benchmark.core.export.ImageExporter;
 import org.metaborg.spoofax.benchmark.core.process.DataProcessor;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
+import org.metaborg.spoofax.benchmark.core.process.ProcessedDataSerializer;
 import org.spoofax.interpreter.library.IOAgent;
 import org.spoofax.interpreter.terms.ITermFactory;
 import org.spoofax.jsglr.client.imploder.ImploderOriginTermFactory;
@@ -18,58 +19,69 @@ import org.spoofax.terms.TermFactory;
 public final class Facade {
 	private final IOAgent agent;
 	private final ITermFactory termFactory;
+	private final CollectedDataSerializer collectedSerializer;
+	private final DataProcessor processor = new DataProcessor();
+	private final ProcessedDataSerializer processedSerializer = new ProcessedDataSerializer();
+	private final CSVExporter csvExporter = new CSVExporter();
+	private final ImageExporter imageExporter = new ImageExporter();
 
 
 	public Facade() {
 		this.termFactory = new ImploderOriginTermFactory(new TermFactory());
 		this.agent = new IOAgent();
+		this.collectedSerializer = new CollectedDataSerializer(termFactory, agent);
 	}
 
 
-	public RawData collect(String languageDir, String languageName, String projectDir) {
-		final RawDataCollector collector = new RawDataCollector(languageDir, languageName, projectDir, agent, termFactory);
+	public CollectedData collect(String languageDir, String languageName, String projectDir) {
+		final DataCollector collector = new DataCollector(languageDir, languageName, projectDir, agent, termFactory);
 		return collector.collect();
 	}
 
-	public void serialize(RawData data, File serializeDirectory) throws IOException {
-		final RawDataSerializer serializer = new RawDataSerializer(termFactory, agent);
-		serializer.serialize(data, serializeDirectory);
+	public void serializeCollected(CollectedData data, File serializeDirectory) throws IOException {
+		collectedSerializer.serialize(data, serializeDirectory);
 	}
 
 	public void
 		collectAndSerialize(String languageDir, String languageName, String projectDir, File serializeDirectory)
 			throws IOException {
-		serialize(collect(languageDir, languageName, projectDir), serializeDirectory);
+		serializeCollected(collect(languageDir, languageName, projectDir), serializeDirectory);
 	}
 
-	public RawData deserialize(File serializedDirectory) throws Exception {
-		final RawDataSerializer serializer = new RawDataSerializer(termFactory, agent);
-		return serializer.deserialize(serializedDirectory);
+	public CollectedData deserializeCollected(File serializedDirectory) throws Exception {
+		return collectedSerializer.deserialize(serializedDirectory);
 	}
 
 
-	public ProcessedData process(RawData data) {
-		final DataProcessor processor = new DataProcessor();
-		return processor.process(data);
+	public ProcessedData process(CollectedData collectedData) {
+		return processor.process(collectedData);
 	}
 
-	public ProcessedData process(String languageDir, String languageName, String projectDir) {
-		return process(collect(languageDir, languageName, projectDir));
+	public void serializeProcessed(ProcessedData data, File serializeFilename) throws IOException {
+		processedSerializer.serialize(data, serializeFilename);
 	}
 
-	public ProcessedData processFromSerialized(File serializedDirectory) throws Exception {
-		return process(deserialize(serializedDirectory));
+	public ProcessedData processAndSerialize(CollectedData data, File serializeFilename) throws IOException {
+		final ProcessedData processedData = processor.process(data);
+		serializeProcessed(processedData, serializeFilename);
+		return processedData;
+	}
+
+	public ProcessedData processFromSerializedCollected(File serializedDirectory) throws Exception {
+		return process(deserializeCollected(serializedDirectory));
+	}
+
+	public ProcessedData deserializeProcessed(File serializeFilename) throws Exception {
+		return processedSerializer.deserialize(serializeFilename);
 	}
 
 
 	public void exportCSV(ProcessedData data, File exportDirectory) throws IllegalArgumentException,
 		IllegalAccessException, IOException {
-		final CSVExporter exporter = new CSVExporter();
-		exporter.export(data, exportDirectory);
+		csvExporter.export(data, exportDirectory);
 	}
 
 	public void exportImage(ProcessedData data, File exportDirectory) throws IOException {
-		final ImageExporter exporter = new ImageExporter();
-		exporter.export(data, exportDirectory);
+		imageExporter.export(data, exportDirectory);
 	}
 }

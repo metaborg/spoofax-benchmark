@@ -51,7 +51,7 @@ public class Main {
 
 					final ProcessedData data;
 					if(cmdExport.deserializationRequired()) {
-						data = facade.processFromSerialized(new File(cmdExport.inputDirectory));
+						data = facade.processFromSerializedCollected(new File(cmdExport.inputDirectory));
 					} else {
 						data =
 							facade.process(cmdExport.languageDirectory, cmdExport.languageName,
