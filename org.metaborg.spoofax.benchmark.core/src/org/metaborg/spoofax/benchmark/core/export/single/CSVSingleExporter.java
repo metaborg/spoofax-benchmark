@@ -1,4 +1,4 @@
-package org.metaborg.spoofax.benchmark.core.export;
+package org.metaborg.spoofax.benchmark.core.export.single;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 
-public final class CSVExporter {
+public final class CSVSingleExporter {
 	public void export(ProcessedData data, File directory) throws Exception {
 		FileUtils.forceMkdir(directory);
 		

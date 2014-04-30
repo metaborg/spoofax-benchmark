@@ -89,11 +89,11 @@ public final class DataCollector {
 		data.skippedTasks = result.getSubterm(2).getSubterm(4).getSubtermCount();
 		data.unevaluatedTasks = result.getSubterm(2).getSubterm(5).getSubtermCount();
 
-		data.time.parseTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(0));
-		data.time.collectTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(1));
-		data.time.performTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(2));
-		data.time.indexPersistTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(3));
-		data.time.taskPersistTime = Tools.asJavaDouble(result.getSubterm(3).getSubterm(4));
+		data.time.parse = Tools.asJavaDouble(result.getSubterm(3).getSubterm(0));
+		data.time.collect = Tools.asJavaDouble(result.getSubterm(3).getSubterm(1));
+		data.time.taskEval = Tools.asJavaDouble(result.getSubterm(3).getSubterm(2));
+		data.time.indexPersist = Tools.asJavaDouble(result.getSubterm(3).getSubterm(3));
+		data.time.taskPersist = Tools.asJavaDouble(result.getSubterm(3).getSubterm(4));
 
 		return data;
 	}

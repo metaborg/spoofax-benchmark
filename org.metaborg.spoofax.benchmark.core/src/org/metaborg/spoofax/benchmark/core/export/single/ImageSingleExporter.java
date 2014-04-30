@@ -1,4 +1,4 @@
-package org.metaborg.spoofax.benchmark.core.export;
+package org.metaborg.spoofax.benchmark.core.export.single;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 
-public class ImageExporter {
+public class ImageSingleExporter {
 	public void export(ProcessedData data, File directory) throws IOException {
 		FileUtils.forceMkdir(directory);
 
@@ -28,11 +28,11 @@ public class ImageExporter {
 			"Task engine instruction kinds", "0", "0%");
 
 		final Map<String, Object> timeMap = Maps.newLinkedHashMap();
-		timeMap.put("Parse", data.time.parseTime);
-		timeMap.put("Collect", data.time.collectTime);
-		timeMap.put("Perform", data.time.performTime);
-		timeMap.put("Persist index", data.time.indexPersistTime);
-		timeMap.put("Persist task engine", data.time.taskPersistTime);
+		timeMap.put("Parse", data.time.parse);
+		timeMap.put("Collect", data.time.collect);
+		timeMap.put("Perform", data.time.taskEval);
+		timeMap.put("Persist index", data.time.indexPersist);
+		timeMap.put("Persist task engine", data.time.taskPersist);
 		writeMapPie(timeMap, new File(directory, "time-pie.png"), "Absolute time taken for each phase", "0.000s", "0%");
 	}
 

@@ -6,8 +6,9 @@ import java.io.IOException;
 import org.metaborg.spoofax.benchmark.core.collect.CollectedData;
 import org.metaborg.spoofax.benchmark.core.collect.CollectedDataSerializer;
 import org.metaborg.spoofax.benchmark.core.collect.DataCollector;
-import org.metaborg.spoofax.benchmark.core.export.CSVExporter;
-import org.metaborg.spoofax.benchmark.core.export.ImageExporter;
+import org.metaborg.spoofax.benchmark.core.export.history.ImageHistoryExporter;
+import org.metaborg.spoofax.benchmark.core.export.single.CSVSingleExporter;
+import org.metaborg.spoofax.benchmark.core.export.single.ImageSingleExporter;
 import org.metaborg.spoofax.benchmark.core.process.DataProcessor;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedDataSerializer;
@@ -19,11 +20,16 @@ import org.spoofax.terms.TermFactory;
 public final class Facade {
 	private final IOAgent agent;
 	private final ITermFactory termFactory;
+
 	private final CollectedDataSerializer collectedSerializer;
-	private final DataProcessor processor = new DataProcessor();
 	private final ProcessedDataSerializer processedSerializer = new ProcessedDataSerializer();
-	private final CSVExporter csvExporter = new CSVExporter();
-	private final ImageExporter imageExporter = new ImageExporter();
+
+	private final DataProcessor processor = new DataProcessor();
+
+	private final CSVSingleExporter csvSingleExporter = new CSVSingleExporter();
+	private final ImageSingleExporter imageSingleExporter = new ImageSingleExporter();
+
+	private final ImageHistoryExporter imageHistoryExporter = new ImageHistoryExporter();
 
 
 	public Facade() {
@@ -75,11 +81,16 @@ public final class Facade {
 	}
 
 
-	public void exportCSV(ProcessedData data, File exportDirectory) throws Exception {
-		csvExporter.export(data, exportDirectory);
+	public void exportSingleCSV(ProcessedData data, File exportDirectory) throws Exception {
+		csvSingleExporter.export(data, exportDirectory);
 	}
 
-	public void exportImage(ProcessedData data, File exportDirectory) throws IOException {
-		imageExporter.export(data, exportDirectory);
+	public void exportSingleImage(ProcessedData data, File exportDirectory) throws IOException {
+		imageSingleExporter.export(data, exportDirectory);
+	}
+
+
+	public void exportHistoryImage(Iterable<ProcessedData> historicalData, File exportDirectory) throws IOException {
+		imageHistoryExporter.export(historicalData, exportDirectory);
 	}
 }

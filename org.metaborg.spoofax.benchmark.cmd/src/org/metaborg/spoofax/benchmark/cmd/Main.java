@@ -1,10 +1,12 @@
 package org.metaborg.spoofax.benchmark.cmd;
 
 import java.io.File;
+import java.util.Collection;
 
 import org.metaborg.spoofax.benchmark.cmd.commands.CollectCommand;
 import org.metaborg.spoofax.benchmark.cmd.commands.CommonArguments;
-import org.metaborg.spoofax.benchmark.cmd.commands.ExportCommand;
+import org.metaborg.spoofax.benchmark.cmd.commands.ExportHistoryCommand;
+import org.metaborg.spoofax.benchmark.cmd.commands.ExportSingleCommand;
 import org.metaborg.spoofax.benchmark.cmd.commands.ProcessCommand;
 import org.metaborg.spoofax.benchmark.core.Facade;
 import org.metaborg.spoofax.benchmark.core.collect.CollectedData;
@@ -12,6 +14,7 @@ import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.internal.Lists;
 
 public class Main {
 	public static void main(String[] args) {
@@ -22,8 +25,10 @@ public class Main {
 		jc.addCommand(CollectCommand.NAME, cmdSerialize);
 		final ProcessCommand cmdProcess = new ProcessCommand();
 		jc.addCommand(ProcessCommand.NAME, cmdProcess);
-		final ExportCommand cmdExport = new ExportCommand();
-		jc.addCommand(ExportCommand.NAME, cmdExport);
+		final ExportSingleCommand cmdSingleExport = new ExportSingleCommand();
+		jc.addCommand(ExportSingleCommand.NAME, cmdSingleExport);
+		final ExportHistoryCommand cmdHistoryExport = new ExportHistoryCommand();
+		jc.addCommand(ExportHistoryCommand.NAME, cmdHistoryExport);
 
 		try {
 			jc.parse(args);
@@ -52,19 +57,32 @@ public class Main {
 					facade.processAndSerialize(data, new File(cmdProcess.outputFile));
 					break;
 				}
-				case ExportCommand.NAME: {
-					final ProcessedData data = facade.deserializeProcessed(new File(cmdExport.inputFile));
-					switch(cmdExport.outputFormat) {
+				case ExportSingleCommand.NAME: {
+					final ProcessedData data = facade.deserializeProcessed(new File(cmdSingleExport.inputFile));
+					switch(cmdSingleExport.outputFormat) {
 						case "csv": {
-							facade.exportCSV(data, new File(cmdExport.outputDirectory));
+							facade.exportSingleCSV(data, new File(cmdSingleExport.outputDirectory));
 							break;
 						}
 						case "image": {
-							facade.exportImage(data, new File(cmdExport.outputDirectory));
+							facade.exportSingleImage(data, new File(cmdSingleExport.outputDirectory));
 							break;
 						}
 					}
 
+					break;
+				}
+				case ExportHistoryCommand.NAME: {
+					final Collection<ProcessedData> historicalData = Lists.newLinkedList();
+					for(String file : cmdHistoryExport.inputFiles) {
+						historicalData.add(facade.deserializeProcessed(new File(file)));
+					}
+					switch(cmdHistoryExport.outputFormat) {
+						case "image": {
+							facade.exportHistoryImage(historicalData, new File(cmdHistoryExport.outputDirectory));
+							break;
+						}
+					}
 					break;
 				}
 			}
