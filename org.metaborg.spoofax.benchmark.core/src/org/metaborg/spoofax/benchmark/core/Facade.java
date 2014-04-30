@@ -33,19 +33,18 @@ public final class Facade {
 	}
 
 
-	public CollectedData collect(String languageDir, String languageName, String projectDir) {
+	public CollectedData collect(String languageDir, String languageName, String projectDir, int warmupPhases) {
 		final DataCollector collector = new DataCollector(languageDir, languageName, projectDir, agent, termFactory);
-		return collector.collect();
+		return collector.collect(warmupPhases);
 	}
 
 	public void serializeCollected(CollectedData data, File serializeDirectory) throws IOException {
 		collectedSerializer.serialize(data, serializeDirectory);
 	}
 
-	public void
-		collectAndSerialize(String languageDir, String languageName, String projectDir, File serializeDirectory)
-			throws IOException {
-		serializeCollected(collect(languageDir, languageName, projectDir), serializeDirectory);
+	public void collectAndSerialize(String languageDir, String languageName, String projectDir, int warmupPhases,
+		File serializeDirectory) throws IOException {
+		serializeCollected(collect(languageDir, languageName, projectDir, warmupPhases), serializeDirectory);
 	}
 
 	public CollectedData deserializeCollected(File serializedDirectory) throws Exception {

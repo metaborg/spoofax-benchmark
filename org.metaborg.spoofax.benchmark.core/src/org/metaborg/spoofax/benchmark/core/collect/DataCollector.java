@@ -50,10 +50,7 @@ public final class DataCollector {
 		org.metaborg.sunshine.drivers.Main.initEnvironment(params);
 	}
 
-	public CollectedData collect() {
-		IndexManager.getInstance().unloadIndex(projectDir, agent);
-		TaskManager.getInstance().unloadTaskEngine(projectDir, agent);
-
+	public CollectedData collect(int warmupPhases) {
 		final ServiceRegistry services = ServiceRegistry.INSTANCE();
 		final AnalysisService analyzer = services.getService(AnalysisService.class);
 		final LanguageService languages = services.getService(LanguageService.class);
@@ -63,7 +60,7 @@ public final class DataCollector {
 		final Collection<File> files =
 			FileUtils.listFiles(new File(projectDir), extensionFilter, TrueFileFilter.INSTANCE);
 
-		final Collection<AnalysisResult> analyzerResults = analyzer.analyze(files);
+		final Collection<AnalysisResult> analyzerResults = analyze(analyzer, files, warmupPhases);
 		if(Iterables.isEmpty(analyzerResults))
 			throw new RuntimeException("Could not analyze files.");
 
@@ -101,6 +98,17 @@ public final class DataCollector {
 		return data;
 	}
 
+	private Collection<AnalysisResult> analyze(AnalysisService analyzer, Collection<File> files, int warmupPhases) {
+		Collection<AnalysisResult> results = null;
+		do {
+			resetIndex();
+			resetTaskEngine();
+			results = analyzer.analyze(files);
+			--warmupPhases;
+		} while(warmupPhases >= 0);
+		return results;
+	}
+
 	private IOFileFilter createExtensionFilter(Collection<String> extensions) {
 		final IOFileFilter[] filters = new IOFileFilter[extensions.size()];
 		int i = 0;
@@ -108,5 +116,17 @@ public final class DataCollector {
 			filters[i++] = FileFilterUtils.suffixFileFilter(extension);
 		}
 		return FileFilterUtils.or(filters);
+	}
+
+	private void resetIndex() {
+		final IndexManager indexManager = IndexManager.getInstance();
+		indexManager.unloadIndex(projectDir, agent);
+		indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).delete();
+	}
+
+	private void resetTaskEngine() {
+		final TaskManager taskManager = TaskManager.getInstance();
+		taskManager.unloadTaskEngine(projectDir, agent);
+		taskManager.getTaskEngineFile(taskManager.getProjectURI(projectDir, agent)).delete();
 	}
 }

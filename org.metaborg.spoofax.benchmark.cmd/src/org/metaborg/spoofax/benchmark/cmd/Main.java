@@ -44,7 +44,7 @@ public class Main {
 				case CollectCommand.NAME: {
 					facade.collectAndSerialize(cmdSerialize.collectArguments.languageDirectory,
 						cmdSerialize.collectArguments.languageName, cmdSerialize.collectArguments.projectDirectory,
-						new File(cmdSerialize.outputDirectory));
+						cmdSerialize.collectArguments.warmupPhases, new File(cmdSerialize.outputDirectory));
 					break;
 				}
 				case ProcessCommand.NAME: {
