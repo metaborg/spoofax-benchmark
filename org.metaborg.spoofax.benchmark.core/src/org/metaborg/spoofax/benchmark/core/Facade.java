@@ -76,8 +76,7 @@ public final class Facade {
 	}
 
 
-	public void exportCSV(ProcessedData data, File exportDirectory) throws IllegalArgumentException,
-		IllegalAccessException, IOException {
+	public void exportCSV(ProcessedData data, File exportDirectory) throws Exception {
 		csvExporter.export(data, exportDirectory);
 	}
 

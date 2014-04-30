@@ -5,7 +5,9 @@ import java.io.File;
 import org.metaborg.spoofax.benchmark.cmd.commands.CollectCommand;
 import org.metaborg.spoofax.benchmark.cmd.commands.CommonArguments;
 import org.metaborg.spoofax.benchmark.cmd.commands.ExportCommand;
+import org.metaborg.spoofax.benchmark.cmd.commands.ProcessCommand;
 import org.metaborg.spoofax.benchmark.core.Facade;
+import org.metaborg.spoofax.benchmark.core.collect.CollectedData;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
 
 import com.beust.jcommander.JCommander;
@@ -18,6 +20,8 @@ public class Main {
 
 		final CollectCommand cmdSerialize = new CollectCommand();
 		jc.addCommand(CollectCommand.NAME, cmdSerialize);
+		final ProcessCommand cmdProcess = new ProcessCommand();
+		jc.addCommand(ProcessCommand.NAME, cmdProcess);
 		final ExportCommand cmdExport = new ExportCommand();
 		jc.addCommand(ExportCommand.NAME, cmdExport);
 
@@ -38,30 +42,19 @@ public class Main {
 
 			switch(jc.getParsedCommand()) {
 				case CollectCommand.NAME: {
-					facade.collectAndSerialize(cmdSerialize.languageDirectory, cmdSerialize.languageName,
-						cmdSerialize.projectDirectory, new File(cmdSerialize.outputDirectory));
+					facade.collectAndSerialize(cmdSerialize.collectArguments.languageDirectory,
+						cmdSerialize.collectArguments.languageName, cmdSerialize.collectArguments.projectDirectory,
+						new File(cmdSerialize.outputDirectory));
+					break;
+				}
+				case ProcessCommand.NAME: {
+					final CollectedData data = facade.deserializeCollected(new File(cmdProcess.inputDirectory));
+					facade.processAndSerialize(data, new File(cmdProcess.outputFile));
 					break;
 				}
 				case ExportCommand.NAME: {
-					final String error = cmdExport.validate();
-					if(error != null) {
-						error(jc, error);
-						return;
-					}
-
-					final ProcessedData data;
-					if(cmdExport.deserializationRequired()) {
-						data = facade.processFromSerializedCollected(new File(cmdExport.inputDirectory));
-					} else {
-						data =
-							facade.process(cmdExport.languageDirectory, cmdExport.languageName,
-								cmdExport.projectDirectory);
-					}
-
+					final ProcessedData data = facade.deserializeProcessed(new File(cmdExport.inputFile));
 					switch(cmdExport.outputFormat) {
-						case "print": {
-							break;
-						}
 						case "csv": {
 							facade.exportCSV(data, new File(cmdExport.outputDirectory));
 							break;

@@ -14,8 +14,7 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 
 public final class CSVExporter {
-	public void export(ProcessedData data, File directory) throws IOException, IllegalArgumentException,
-		IllegalAccessException {
+	public void export(ProcessedData data, File directory) throws Exception {
 		FileUtils.forceMkdir(directory);
 		
 		writePrims(data.time, new File(directory, "time.csv"));
