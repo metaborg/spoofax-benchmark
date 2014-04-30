@@ -47,7 +47,7 @@ public final class RawDataSerializer {
 		try {
 			final RawData data = (RawData) in.readObject(RawData.class);
 			data.index = IndexManager.getInstance().read(new File(directory, "index.idx"), termFactory, agent);
-			data.taskEngine = TaskManager.getInstance().read(new File(directory, "index.idx"), termFactory);
+			data.taskEngine = TaskManager.getInstance().read(new File(directory, "taskengine.idx"), termFactory);
 			return data;
 		} finally {
 			in.close();
