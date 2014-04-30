@@ -31,8 +31,8 @@ public final class DataProcessor {
 
 		data.numPartitions = Iterables.size(rawData.index.getAllPartitions());
 		
-		data.indexEntriesAdded = rawData.indexEntriesAdded;
-		data.indexEntriesRemoved = rawData.indexEntriesRemoved;
+		data.entriesAdded = rawData.indexEntriesAdded;
+		data.entriesRemoved = rawData.indexEntriesRemoved;
 
 		// TODO: memory and disk sizes.
 
