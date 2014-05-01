@@ -23,8 +23,8 @@ public class ImageSingleExporter {
 	public void export(ProcessedData data, File directory) throws IOException {
 		FileUtils.forceMkdir(directory);
 
-		writeMultisetPie(data.index.numKinds, new File(directory, "index-kinds-pie.png"), "Index entry kinds", "0", "0%");
-		writeMultisetPie(data.taskEngine.numKinds, new File(directory, "taskengine-kinds-pie.png"),
+		writeMultisetPie(data.index.kinds, new File(directory, "index-kinds-pie.png"), "Index entry kinds", "0", "0%");
+		writeMultisetPie(data.taskEngine.instructionKinds, new File(directory, "taskengine-kinds-pie.png"),
 			"Task engine instruction kinds", "0", "0%");
 
 		final Map<String, Object> timeMap = Maps.newLinkedHashMap();

@@ -19,9 +19,9 @@ public final class CSVSingleExporter {
 		
 		writePrims(data.time, new File(directory, "time.csv"));
 		writePrims(data.index, new File(directory, "index.csv"));
-		writeMultiset(data.index.numKinds, new File(directory, "index-kinds.csv"));
+		writeMultiset(data.index.kinds, new File(directory, "index-kinds.csv"));
 		writePrims(data.taskEngine, new File(directory, "taskengine.csv"));
-		writeMultiset(data.taskEngine.numKinds, new File(directory, "taskengine-kinds.csv"));
+		writeMultiset(data.taskEngine.instructionKinds, new File(directory, "taskengine-kinds.csv"));
 	}
 
 	private void writePrims(Object object, File file) throws IllegalArgumentException, IllegalAccessException,

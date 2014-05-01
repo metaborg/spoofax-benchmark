@@ -12,9 +12,8 @@ import com.google.common.collect.Multiset;
 public final class IndexData implements Serializable {
 	private static final long serialVersionUID = 2830783095447774209L;
 
-
 	public long numEntries;
-	public Multiset<String> numKinds = HashMultiset.create();
+	public Multiset<String> kinds = HashMultiset.create();
 
 	public long numPartitions;
 
