@@ -31,74 +31,81 @@ public class ImageSingleExporter {
 	}
 
 	private void exportIndex(ProcessedData data, File directory) throws IOException {
-		writeMultisetPie(data.index.kinds, new File(directory, "index-kinds.png"), "Index entry kinds", "0", "0%");
+		writePie(createMultisetDataset(data.index.kinds), new File(directory, "index-kinds.png"), "Index entry kinds",
+			"0", "0%");
 
-		writeMathMeanPie(data.index.uriLengthPerKind, new File(directory, "index-uri-segment-length.png"),
+		writePie(createMathSumDataset(data.index.uriLengthPerKind),
+			new File(directory, "index-uri-segment-length.png"),
 			"Index URI segment length (mean) distribution per entry kind", "0.000", "0%");
 
-		writeMultisetPie(data.index.uriSegmentKinds, new File(directory, "index-uri-segment-kinds.png"),
+		writePie(createMultisetDataset(data.index.uriSegmentKinds), new File(directory, "index-uri-segment-kinds.png"),
 			"Index URI segment kinds", "0", "0%");
 
-		final Map<String, Object> indexSizeMap = Maps.newLinkedHashMap();
+		final Map<String, Number> indexSizeMap = Maps.newLinkedHashMap();
 		indexSizeMap.put("Persisted", data.index.diskSize);
 		indexSizeMap.put("Memory", data.index.memSize);
-		writeMapPie(indexSizeMap, new File(directory, "index-size.png"), "Absolute index size", "0.000MB", "0%");
+		writePie(createMapDataset(indexSizeMap), new File(directory, "index-size.png"), "Absolute index size",
+			"0.000MB", "0%");
 	}
 
 	private void exportTaskEngine(ProcessedData data, File directory) throws IOException {
-		writeMultisetPie(data.taskEngine.instructionKinds, new File(directory, "taskengine-instruction-kinds.png"),
-			"Task engine, instruction kinds", "0", "0%");
+		writePie(createMultisetDataset(data.taskEngine.instructionKinds), new File(directory,
+			"taskengine-instruction-kinds.png"), "Task engine, instruction kinds", "0", "0%");
 
-		writeMathSumPie(data.taskEngine.evaluationsPerKind, new File(directory, "taskengine-evaluations-sum.png"),
-			"Task engine, number of evaluations (sum) per instruction kind", "0", "0%");
-		writeMathMeanPie(data.taskEngine.evaluationsPerKind, new File(directory, "taskengine-evaluations-mean.png"),
-			"Task engine, number of evaluations (mean) per instruction kind", "0.000", "0%");
+		writePie(createMathSumDataset(data.taskEngine.evaluationsPerKind), new File(directory,
+			"taskengine-evaluations-sum.png"), "Task engine, number of evaluations (sum) per instruction kind", "0",
+			"0%");
+		writePie(createMathMeanDataset(data.taskEngine.evaluationsPerKind), new File(directory,
+			"taskengine-evaluations-mean.png"), "Task engine, number of evaluations (mean) per instruction kind",
+			"0.000", "0%");
 
-		writeMathSumPie(data.taskEngine.evaluationTimesPerKind, new File(directory,
+		writePie(createMathSumDataset(data.taskEngine.evaluationTimesPerKind), new File(directory,
 			"taskengine-evaluation-times-sum.png"), "Task engine, single evaluation times (sum) per instruction kind",
 			"0", "0%");
-		writeMathMeanPie(data.taskEngine.evaluationTimesPerKind, new File(directory,
+		writePie(createMathMeanDataset(data.taskEngine.evaluationTimesPerKind), new File(directory,
 			"taskengine-evaluation-times-mean.png"),
 			"Task engine, single evaluation times (mean) per instruction kind", "0.000", "0%");
 
-		writeMultisetPie(data.taskEngine.taskKinds, new File(directory, "taskengine-task-kinds.png"),
+		writePie(createMultisetDataset(data.taskEngine.taskKinds), new File(directory, "taskengine-task-kinds.png"),
 			"Task engine, task kinds", "0", "0%");
 
-		exportDependencies(data.taskEngine.staticDependenciesPerKind, directory, "taskengine-statdep", "Task engine, static");
-		exportDependencies(data.taskEngine.dynamicDependenciesPerKind, directory, "taskengine-dyndep", "Task engine, dynamic");
+		exportDependencies(data.taskEngine.staticDependenciesPerKind, directory, "taskengine-statdep",
+			"Task engine, static");
+		exportDependencies(data.taskEngine.dynamicDependenciesPerKind, directory, "taskengine-dyndep",
+			"Task engine, dynamic");
 		exportDependencies(data.taskEngine.allDependenciesPerKind, directory, "taskengine-alldep", "Task engine, all");
 
-		writeMultisetPie(data.taskEngine.staticDependencies.status,
-			new File(directory, "taskengine-statdep-status.png"), "Task engine, static dependency status", "0", "0%");
-		writeMultisetPie(data.taskEngine.dynamicDependencies.status,
-			new File(directory, "taskengine-dyndep-status.png"), "Task engine, dynamic dependency status", "0", "0%");
-		
-		writeMultisetPie(data.taskEngine.allDependencies.status, new File(directory, "taskengine-alldep-status.png"),
-			"Task engine, all dependency status", "0", "0%");
+		writePie(createMultisetDataset(data.taskEngine.staticDependencies.status), new File(directory,
+			"taskengine-statdep-status.png"), "Task engine, static dependency status", "0", "0%");
+		writePie(createMultisetDataset(data.taskEngine.dynamicDependencies.status), new File(directory,
+			"taskengine-dyndep-status.png"), "Task engine, dynamic dependency status", "0", "0%");
 
-		writeMultisetPie(data.taskEngine.taskKinds, new File(directory, "taskengine-types.png"),
+		writePie(createMultisetDataset(data.taskEngine.allDependencies.status), new File(directory,
+			"taskengine-alldep-status.png"), "Task engine, all dependency status", "0", "0%");
+
+		writePie(createMultisetDataset(data.taskEngine.taskKinds), new File(directory, "taskengine-types.png"),
 			"Task engine, task types", "0", "0%");
 
-		writeMathSumPie(data.taskEngine.dependencyTrailLengthPerKind, new File(directory,
+		writePie(createMathSumDataset(data.taskEngine.dependencyTrailLengthPerKind), new File(directory,
 			"taskengine-alldep-trail-sum.png"),
 			"Task engine, length of dependency trail (sum) for root tasks per instruction kind", "0", "0%");
-		writeMathMeanPie(data.taskEngine.dependencyTrailLengthPerKind, new File(directory,
+		writePie(createMathMeanDataset(data.taskEngine.dependencyTrailLengthPerKind), new File(directory,
 			"taskengine-alldep-trail-mean.png"),
 			"Task engine, length of dependency trail (mean) for root tasks per instruction kind", "0.000", "0%");
 
-		writeMultisetPie(data.taskEngine.dependencyKind, new File(directory, "taskengine-alldep-kinds.png"),
-			"Task engine, dependency kinds", "0", "0%");
+		writePie(createMultisetDataset(data.taskEngine.dependencyKind), new File(directory,
+			"taskengine-alldep-kinds.png"), "Task engine, dependency kinds", "0", "0%");
 
-		writeMathSumPie(data.taskEngine.numResultsPerKind, new File(directory, "taskengine-results-sum.png"),
-			"Task engine, number of results (sum) per instruction kind", "0", "0%");
-		writeMathMeanPie(data.taskEngine.numResultsPerKind, new File(directory, "taskengine-results-mean.png"),
-			"Task engine, number of results (mean) per instruction kind", "0.000", "0%");
+		writePie(createMathSumDataset(data.taskEngine.numResultsPerKind), new File(directory,
+			"taskengine-results-sum.png"), "Task engine, number of results (sum) per instruction kind", "0", "0%");
+		writePie(createMathMeanDataset(data.taskEngine.numResultsPerKind), new File(directory,
+			"taskengine-results-mean.png"), "Task engine, number of results (mean) per instruction kind", "0.000", "0%");
 
-		final Map<String, Object> taskEngineSizeMap = Maps.newLinkedHashMap();
+		final Map<String, Number> taskEngineSizeMap = Maps.newLinkedHashMap();
 		taskEngineSizeMap.put("Persisted", data.taskEngine.diskSize);
 		taskEngineSizeMap.put("Memory", data.taskEngine.memSize);
-		writeMapPie(taskEngineSizeMap, new File(directory, "taskengine-size.png"), "Absolute task engine size",
-			"0.000MB", "0%");
+		writePie(createMapDataset(taskEngineSizeMap), new File(directory, "taskengine-size.png"),
+			"Absolute task engine size", "0.000MB", "0%");
 	}
 
 	private void exportDependencies(Map<String, TaskDependencyData> data, File directory, String filePrefix,
@@ -114,61 +121,60 @@ public class ImageSingleExporter {
 		sizeDataset.sortByValues(SortOrder.DESCENDING);
 		outDataset.sortByValues(SortOrder.DESCENDING);
 		inDataset.sortByValues(SortOrder.DESCENDING);
-		writePie(sizeDataset, new File(directory, filePrefix + "-size.png"), titlePrefix + " dependency size (sum) per instruction kind", "0", "0%");
-		writePie(outDataset, new File(directory, filePrefix + "-out.png"), titlePrefix + " outgoing dependencies (sum) per instruction kind", "0", "0%");
-		writePie(inDataset, new File(directory, filePrefix + "-in.png"), titlePrefix + " incoming dependencies (sum) per instruction kind", "0", "0%");
+		writePie(sizeDataset, new File(directory, filePrefix + "-size.png"), titlePrefix
+			+ " dependency size (sum) per instruction kind", "0", "0%");
+		writePie(outDataset, new File(directory, filePrefix + "-out.png"), titlePrefix
+			+ " outgoing dependencies (sum) per instruction kind", "0", "0%");
+		writePie(inDataset, new File(directory, filePrefix + "-in.png"), titlePrefix
+			+ " incoming dependencies (sum) per instruction kind", "0", "0%");
 	}
 
 	private void exportTime(ProcessedData data, File directory) throws IOException {
-		final Map<String, Object> timeMap = Maps.newLinkedHashMap();
+		final Map<String, Number> timeMap = Maps.newLinkedHashMap();
 		timeMap.put("Parse", data.time.parse);
 		timeMap.put("Collect", data.time.collect);
 		timeMap.put("Perform", data.time.taskEval);
 		timeMap.put("Persist index", data.time.indexPersist);
 		timeMap.put("Persist task engine", data.time.taskPersist);
-		writeMapPie(timeMap, new File(directory, "time.png"), "Absolute time taken for each phase", "0.000s", "0%");
+		writePie(createMapDataset(timeMap), new File(directory, "time.png"), "Absolute time taken for each phase",
+			"0.000s", "0%");
 	}
 
 
-	private void
-		writeMultisetPie(Multiset<String> multiset, File file, String title, String absFormat, String perFormat)
-			throws IOException {
+	private DefaultPieDataset createMultisetDataset(Multiset<String> multiset) {
 		final DefaultPieDataset dataset = new DefaultPieDataset();
 		for(Entry<String> entry : multiset.entrySet()) {
 			dataset.setValue(entry.getElement(), (Number) entry.getCount());
 		}
 		dataset.sortByValues(SortOrder.DESCENDING);
-		writePie(dataset, file, title, absFormat, perFormat);
+		return dataset;
 	}
 
-	private void writeMapPie(Map<String, Object> map, File file, String title, String absFormat, String perFormat)
-		throws IOException {
+	private DefaultPieDataset createMapDataset(Map<String, Number> map) {
 		final DefaultPieDataset dataset = new DefaultPieDataset();
-		for(java.util.Map.Entry<String, Object> entry : map.entrySet()) {
+		for(java.util.Map.Entry<String, Number> entry : map.entrySet()) {
 			dataset.setValue(entry.getKey(), (Number) entry.getValue());
 		}
 		dataset.sortByValues(SortOrder.DESCENDING);
-		writePie(dataset, file, title, absFormat, perFormat);
+		return dataset;
 	}
 
-	private void writeMathMeanPie(Map<String, MathLongList> map, File file, String title, String absFormat,
-		String perFormat) throws IOException {
+	private DefaultPieDataset createMathMeanDataset(Map<String, MathLongList> map) {
 		final DefaultPieDataset dataset = new DefaultPieDataset();
 		for(java.util.Map.Entry<String, MathLongList> entry : map.entrySet()) {
 			dataset.setValue(entry.getKey(), (Number) entry.getValue().mean());
 		}
 		dataset.sortByValues(SortOrder.DESCENDING);
-		writePie(dataset, file, title, absFormat, perFormat);
+		return dataset;
 	}
 
-	private void writeMathSumPie(Map<String, MathLongList> map, File file, String title, String absFormat,
-		String perFormat) throws IOException {
+	private DefaultPieDataset createMathSumDataset(Map<String, MathLongList> map) {
 		final DefaultPieDataset dataset = new DefaultPieDataset();
 		for(java.util.Map.Entry<String, MathLongList> entry : map.entrySet()) {
 			dataset.setValue(entry.getKey(), (Number) entry.getValue().sum());
 		}
 		dataset.sortByValues(SortOrder.DESCENDING);
-		writePie(dataset, file, title, absFormat, perFormat);
+		return dataset;
 	}
 
 
