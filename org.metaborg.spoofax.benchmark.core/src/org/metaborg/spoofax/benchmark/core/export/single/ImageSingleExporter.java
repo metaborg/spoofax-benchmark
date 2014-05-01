@@ -34,6 +34,16 @@ public class ImageSingleExporter {
 		timeMap.put("Persist index", data.time.indexPersist);
 		timeMap.put("Persist task engine", data.time.taskPersist);
 		writeMapPie(timeMap, new File(directory, "time-pie.png"), "Absolute time taken for each phase", "0.000s", "0%");
+		
+		final Map<String, Object> indexSizeMap = Maps.newLinkedHashMap();
+		indexSizeMap.put("Persisted", data.index.diskSize);
+		indexSizeMap.put("Memory", data.index.memSize);
+		writeMapPie(indexSizeMap, new File(directory, "index-size.png"), "Absolute index size", "0.000MB", "0%");
+		
+		final Map<String, Object> taskEngineSizeMap = Maps.newLinkedHashMap();
+		taskEngineSizeMap.put("Persisted", data.taskEngine.diskSize);
+		taskEngineSizeMap.put("Memory", data.taskEngine.memSize);
+		writeMapPie(taskEngineSizeMap, new File(directory, "taskengine-size.png"), "Absolute task engine size", "0.000MB", "0%");
 	}
 
 	private void

@@ -24,6 +24,6 @@ public final class IndexData implements Serializable {
 	public final Map<String, MathLongList> uriLengthPerKind = Maps.newHashMap();
 	public final Multiset<String> uriSegmentKinds = HashMultiset.create();
 
-	public long memSize;
-	public long diskSize;
+	public double memSize;
+	public double diskSize;
 }

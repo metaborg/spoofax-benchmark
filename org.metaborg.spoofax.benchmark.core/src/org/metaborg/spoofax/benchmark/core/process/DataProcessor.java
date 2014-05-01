@@ -59,8 +59,8 @@ public final class DataProcessor {
 		data.entriesAdded = rawData.indexEntriesAdded;
 		data.entriesRemoved = rawData.indexEntriesRemoved;
 
-		data.diskSize = new File(rawData.indexFile).length();
-		data.memSize = RamUsageEstimator.sizeOf(rawData.index);
+		data.diskSize = new File(rawData.indexFile).length() / 1000000.0;
+		data.memSize = RamUsageEstimator.sizeOf(rawData.index) / 1000000.0;
 
 		return data;
 	}
@@ -108,8 +108,8 @@ public final class DataProcessor {
 		data.skippedTasks = rawData.skippedTasks;
 		data.unevaluatedTasks = rawData.unevaluatedTasks;
 
-		data.diskSize = new File(rawData.taskEngineFile).length();
-		data.memSize = RamUsageEstimator.sizeOf(rawData.taskEngine);
+		data.diskSize = new File(rawData.taskEngineFile).length() / 1000000.0;
+		data.memSize = RamUsageEstimator.sizeOf(rawData.taskEngine) / 1000000.0;
 
 		return data;
 	}

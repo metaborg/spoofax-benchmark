@@ -30,8 +30,12 @@ public final class CollectedDataSerializer {
 
 	public CollectedData deserialize(File directory) throws Exception {
 		final CollectedData data = serializer.deserialize(new File(directory, "rawdata.dat"));
-		data.index = IndexManager.getInstance().read(new File(directory, "index.idx"), termFactory, agent);
-		data.taskEngine = TaskManager.getInstance().read(new File(directory, "taskengine.idx"), termFactory);
+		final File indexFile = new File(directory, "index.idx");
+		data.indexFile = indexFile.getAbsolutePath();
+		data.index = IndexManager.getInstance().read(indexFile, termFactory, agent);
+		final File taskEngineFile = new File(directory, "taskengine.idx");
+		data.taskEngineFile = taskEngineFile.getAbsolutePath();
+		data.taskEngine = TaskManager.getInstance().read(taskEngineFile, termFactory);
 		return data;
 	}
 }

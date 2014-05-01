@@ -47,6 +47,6 @@ public final class TaskEngineData implements Serializable {
 	public final MathLongList numResults = new MathLongList();
 	public final Map<String, MathLongList> numResultsPerKind = Maps.newHashMap();
 
-	public long memSize;
-	public long diskSize;
+	public double memSize;
+	public double diskSize;
 }
