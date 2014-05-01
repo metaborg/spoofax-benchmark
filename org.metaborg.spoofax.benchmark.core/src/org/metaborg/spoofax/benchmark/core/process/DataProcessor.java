@@ -1,5 +1,6 @@
 package org.metaborg.spoofax.benchmark.core.process;
 
+import java.io.File;
 import java.util.Map;
 
 import org.metaborg.runtime.task.ITask;
@@ -58,6 +59,7 @@ public final class DataProcessor {
 		data.entriesRemoved = rawData.indexEntriesRemoved;
 
 		// TODO: memory and disk sizes.
+		data.diskSize = new File(rawData.indexFile).length();
 
 		return data;
 	}
@@ -106,6 +108,7 @@ public final class DataProcessor {
 		data.unevaluatedTasks = rawData.unevaluatedTasks;
 
 		// TODO: memory and disk sizes.
+		data.diskSize = new File(rawData.taskEngineFile).length();
 
 		return data;
 	}

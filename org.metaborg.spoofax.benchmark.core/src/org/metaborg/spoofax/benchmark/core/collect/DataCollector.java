@@ -24,6 +24,7 @@ import com.beust.jcommander.JCommander;
 import com.google.common.collect.Iterables;
 
 public final class DataCollector {
+	private final String languageDir;
 	private final String languageName;
 	private final String projectDir;
 	private final IOAgent agent;
@@ -31,6 +32,7 @@ public final class DataCollector {
 
 	public DataCollector(String languageDir, String languageName, String projectDir, IOAgent agent,
 		ITermFactory termFactory) {
+		this.languageDir = languageDir;
 		this.languageName = languageName;
 		this.projectDir = projectDir;
 		this.agent = agent;
@@ -65,6 +67,9 @@ public final class DataCollector {
 			throw new RuntimeException("Could not analyze files.");
 
 		final CollectedData data = new CollectedData();
+		data.languageDirectory = languageDir;
+		data.languageName = languageName;
+		data.projectDirectory = projectDir;
 
 		for(AnalysisResult result : analyzerResults) {
 			final FileData fileData = new FileData();
@@ -77,11 +82,16 @@ public final class DataCollector {
 		}
 		IStrategoTerm result = Iterables.getFirst(analyzerResults, null).rawResults();
 
-		data.index = IndexManager.getInstance().loadIndex(projectDir, languageName, termFactory, agent);
+		final IndexManager indexManager = IndexManager.getInstance();
+		data.indexFile = indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).getAbsolutePath();
+		data.index = indexManager.loadIndex(projectDir, languageName, termFactory, agent);
 		data.indexEntriesAdded = Tools.asJavaInt(result.getSubterm(1).getSubterm(0));
 		data.indexEntriesRemoved = Tools.asJavaInt(result.getSubterm(1).getSubterm(1));
 
-		data.taskEngine = TaskManager.getInstance().loadTaskEngine(projectDir, termFactory, agent);
+		final TaskManager taskManager = TaskManager.getInstance();
+		data.taskEngineFile =
+			taskManager.getTaskEngineFile(taskManager.getProjectURI(projectDir, agent)).getAbsolutePath();
+		data.taskEngine = taskManager.loadTaskEngine(projectDir, termFactory, agent);
 		data.tasksRemoved = Tools.asJavaInt(result.getSubterm(2).getSubterm(0));
 		data.tasksAdded = Tools.asJavaInt(result.getSubterm(2).getSubterm(1));
 		data.tasksInvalidated = Tools.asJavaInt(result.getSubterm(2).getSubterm(2));

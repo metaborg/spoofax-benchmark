@@ -10,13 +10,19 @@ import com.google.common.collect.Lists;
 
 public final class CollectedData implements Serializable {
 	private static final long serialVersionUID = 5478160852945519151L;
-
+	
+	public String languageDirectory;
+	public String languageName;
+	public String projectDirectory;
+	
 	public final Collection<FileData> files = Lists.newLinkedList();
 
+	public transient String indexFile;
 	public transient IIndex index;
 	public long indexEntriesRemoved;
 	public long indexEntriesAdded;
 
+	public transient String taskEngineFile;
 	public transient ITaskEngine taskEngine;
 	public long tasksRemoved;
 	public long tasksAdded;
