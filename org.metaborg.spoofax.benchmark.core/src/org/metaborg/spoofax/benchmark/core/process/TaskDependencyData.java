@@ -12,5 +12,5 @@ public final class TaskDependencyData implements Serializable {
 	public long inDeps;
 	public long outDeps;
 
-	public final Multiset<String> kind = HashMultiset.create();
+	public final Multiset<String> status = HashMultiset.create();
 }

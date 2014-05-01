@@ -34,15 +34,18 @@ public final class TaskEngineData implements Serializable {
 	public final MathLongList evaluationTimes = new MathLongList();
 	public final Map<String, MathLongList> evaluationTimesPerKind = Maps.newHashMap();
 
-	public final Multiset<String> taskTypes = HashMultiset.create();
+	public final Multiset<String> taskKinds = HashMultiset.create();
 
-	public final TaskDependencyData dependencies = new TaskDependencyData();
-	public final Map<String, TaskDependencyData> dependenciesPerKind = Maps.newHashMap();
+	public final TaskDependencyData staticDependencies = new TaskDependencyData();
+	public final Map<String, TaskDependencyData> staticDependenciesPerKind = Maps.newHashMap();
 	public final TaskDependencyData dynamicDependencies = new TaskDependencyData();
 	public final Map<String, TaskDependencyData> dynamicDependenciesPerKind = Maps.newHashMap();
+	public final TaskDependencyData allDependencies = new TaskDependencyData();
+	public final Map<String, TaskDependencyData> allDependenciesPerKind = Maps.newHashMap();
 	public final MathLongList dependencyTrailLength = new MathLongList();
 	public final Map<String, MathLongList> dependencyTrailLengthPerKind = Maps.newHashMap();
-
+	public final Multiset<String> dependencyKind = HashMultiset.create();
+	
 	public final Multiset<String> taskStatusKinds = HashMultiset.create();
 	public final MathLongList numResults = new MathLongList();
 	public final Map<String, MathLongList> numResultsPerKind = Maps.newHashMap();

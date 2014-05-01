@@ -82,16 +82,21 @@ public final class DataProcessor {
 			data.evaluationTimes.add(task.time());
 			addToList(data.evaluationTimesPerKind, kind, task.time());
 
-			data.taskTypes.add(task.type().name());
+			data.taskKinds.add(task.type().name());
 
-			if(processDependencyData(data, rawData.taskEngine.getDependencies(taskID, false),
-				rawData.taskEngine.getDependents(taskID, false),
-				getOrCreate(data.dependenciesPerKind, kind, new TaskDependencyData()))) {
+			processDependencyData(rawData.taskEngine.getDependencies(taskID, false),
+				rawData.taskEngine.getDependents(taskID, false), data.staticDependencies,
+				getOrCreate(data.staticDependenciesPerKind, kind, new TaskDependencyData()));
+			processDependencyData(rawData.taskEngine.getDynamicDependencies(taskID),
+				rawData.taskEngine.getDynamicDependents(taskID), data.dynamicDependencies,
+				getOrCreate(data.dynamicDependenciesPerKind, kind, new TaskDependencyData()));
+			if(processDependencyData(rawData.taskEngine.getDependencies(taskID, true),
+				rawData.taskEngine.getDependents(taskID, true), data.allDependencies,
+				getOrCreate(data.allDependenciesPerKind, kind, new TaskDependencyData()))) {
 				processDependencyTrails(data, kind, rawData.taskEngine, taskID);
 			}
-			processDependencyData(data, rawData.taskEngine.getDynamicDependencies(taskID),
-				rawData.taskEngine.getDynamicDependents(taskID),
-				getOrCreate(data.dynamicDependenciesPerKind, kind, new TaskDependencyData()));
+			data.dependencyKind.add("Static", (int)data.staticDependencies.size);
+			data.dependencyKind.add("Dynamic", (int)data.dynamicDependencies.size);
 
 			data.taskStatusKinds.add(task.status().name());
 			final long numResults = task.results().size();
@@ -115,15 +120,15 @@ public final class DataProcessor {
 	}
 
 	@SuppressWarnings("unused")
-	private boolean processDependencyData(TaskEngineData data, Iterable<IStrategoTerm> outDeps,
-		final Iterable<IStrategoTerm> inDeps, TaskDependencyData depsPerKind) {
+	private boolean processDependencyData(Iterable<IStrategoTerm> outDeps, final Iterable<IStrategoTerm> inDeps,
+		TaskDependencyData deps, TaskDependencyData depsPerKind) {
 		boolean hasOutDeps = false;
 		boolean hasInDeps = false;
 		for(IStrategoTerm dep : outDeps) {
 			hasOutDeps = true;
-			++data.dependencies.size;
-			++data.dependencies.inDeps;
-			++data.dependencies.outDeps;
+			++deps.size;
+			++deps.inDeps;
+			++deps.outDeps;
 			++depsPerKind.size;
 			++depsPerKind.outDeps;
 		}
@@ -132,18 +137,18 @@ public final class DataProcessor {
 			++depsPerKind.inDeps;
 		}
 		if(hasOutDeps && hasInDeps) {
-			data.dependencies.kind.add("Node");
-			depsPerKind.kind.add("Node");
+			deps.status.add("Node");
+			depsPerKind.status.add("Node");
 		} else if(hasOutDeps) {
-			data.dependencies.kind.add("Root");
-			depsPerKind.kind.add("Root");
+			deps.status.add("Root");
+			depsPerKind.status.add("Root");
 			return true;
 		} else if(hasInDeps) {
-			data.dependencies.kind.add("Leaf");
-			depsPerKind.kind.add("Leaf");
+			deps.status.add("Leaf");
+			depsPerKind.status.add("Leaf");
 		} else {
-			data.dependencies.kind.add("Independent");
-			depsPerKind.kind.add("Independent");
+			deps.status.add("Independent");
+			depsPerKind.status.add("Independent");
 			return true;
 		}
 		return false;
