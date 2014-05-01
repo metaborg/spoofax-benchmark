@@ -14,6 +14,7 @@ import org.spoofax.interpreter.library.index.IndexEntry;
 import org.spoofax.interpreter.terms.IStrategoAppl;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 
+import com.carrotsearch.sizeof.RamUsageEstimator;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -58,8 +59,8 @@ public final class DataProcessor {
 		data.entriesAdded = rawData.indexEntriesAdded;
 		data.entriesRemoved = rawData.indexEntriesRemoved;
 
-		// TODO: memory and disk sizes.
 		data.diskSize = new File(rawData.indexFile).length();
+		data.memSize = RamUsageEstimator.sizeOf(rawData.index);
 
 		return data;
 	}
@@ -107,8 +108,8 @@ public final class DataProcessor {
 		data.skippedTasks = rawData.skippedTasks;
 		data.unevaluatedTasks = rawData.unevaluatedTasks;
 
-		// TODO: memory and disk sizes.
 		data.diskSize = new File(rawData.taskEngineFile).length();
+		data.memSize = RamUsageEstimator.sizeOf(rawData.taskEngine);
 
 		return data;
 	}
