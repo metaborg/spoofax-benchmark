@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/org.metaborg.spoofax.benchmark.cmd/src/org/metaborg/spoofax/benchmark/cmd/Main.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.metaborg.spoofax.benchmark.cmd.Main"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="export-single&#10;--infile=/Users/gohla/Spoofax/Repositories/github.com/spoofax-minijava/examples/processed/processed.dat&#10;--outdir=/Users/gohla/Spoofax/Repositories/github.com/spoofax-minijava/examples/benchmark&#10;--outfmt=image"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.metaborg.spoofax.benchmark.cmd"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-server&#10;-Xss16m&#10;-Xms2G&#10;-Xmx2G"/>
+</launchConfiguration>
