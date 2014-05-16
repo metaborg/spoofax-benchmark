@@ -2,18 +2,20 @@ package org.metaborg.spoofax.benchmark.core.collect;
 
 import java.io.Serializable;
 
+import org.metaborg.spoofax.benchmark.core.util.MathDoubleList;
+
 public final class TimeData implements Serializable {
 	private static final long serialVersionUID = -306568069539610307L;
 	
 	
-	public double parse;
-	public double collect;
-	public double taskEval;
-	public double indexPersist;
-	public double taskPersist;
+	public final MathDoubleList parse = new MathDoubleList();
+	public final MathDoubleList collect = new MathDoubleList();
+	public final MathDoubleList taskEval = new MathDoubleList();
+	public final MathDoubleList indexPersist = new MathDoubleList();
+	public final MathDoubleList taskPersist = new MathDoubleList();
 	
 	
-	public double total() {
-		return parse + collect + taskEval + indexPersist + taskPersist;
+	public double totalByMean() {
+		return parse.mean() + collect.mean() + taskEval.mean() + indexPersist.mean() + taskPersist.mean();
 	}
 }

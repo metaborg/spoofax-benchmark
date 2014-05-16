@@ -39,9 +39,10 @@ public final class Facade {
 	}
 
 
-	public CollectedData collect(String languageDir, String languageName, String projectDir, int warmupPhases) {
+	public CollectedData collect(String languageDir, String languageName, String projectDir, int warmupPhases,
+		int measurementPhases) {
 		final DataCollector collector = new DataCollector(languageDir, languageName, projectDir, agent, termFactory);
-		return collector.collect(warmupPhases);
+		return collector.collect(warmupPhases, measurementPhases);
 	}
 
 	public void serializeCollected(CollectedData data, File serializeDirectory) throws IOException {
@@ -49,8 +50,9 @@ public final class Facade {
 	}
 
 	public void collectAndSerialize(String languageDir, String languageName, String projectDir, int warmupPhases,
-		File serializeDirectory) throws IOException {
-		serializeCollected(collect(languageDir, languageName, projectDir, warmupPhases), serializeDirectory);
+		int measurementPhases, File serializeDirectory) throws IOException {
+		serializeCollected(collect(languageDir, languageName, projectDir, warmupPhases, measurementPhases),
+			serializeDirectory);
 	}
 
 	public CollectedData deserializeCollected(File serializedDirectory) throws Exception {
@@ -58,22 +60,27 @@ public final class Facade {
 	}
 
 
-	public ProcessedData process(CollectedData collectedData) {
-		return processor.process(collectedData);
+	public ProcessedData process(CollectedData collectedData, boolean processTimeData, boolean processIndexData,
+		boolean processTaskEngineData) {
+		return processor.process(collectedData, processTimeData, processIndexData, processTaskEngineData);
 	}
 
 	public void serializeProcessed(ProcessedData data, File serializeFilename) throws IOException {
 		processedSerializer.serialize(data, serializeFilename);
 	}
 
-	public ProcessedData processAndSerialize(CollectedData data, File serializeFilename) throws IOException {
-		final ProcessedData processedData = processor.process(data);
+	public ProcessedData processAndSerialize(CollectedData data, boolean processTimeData, boolean processIndexData,
+		boolean processTaskEngineData, File serializeFilename) throws IOException {
+		final ProcessedData processedData =
+			processor.process(data, processTimeData, processIndexData, processTaskEngineData);
 		serializeProcessed(processedData, serializeFilename);
 		return processedData;
 	}
 
-	public ProcessedData processFromSerializedCollected(File serializedDirectory) throws Exception {
-		return process(deserializeCollected(serializedDirectory));
+	public ProcessedData processFromSerializedCollected(File serializedDirectory, boolean processTimeData,
+		boolean processIndexData, boolean processTaskEngineData) throws Exception {
+		return process(deserializeCollected(serializedDirectory), processTimeData, processIndexData,
+			processTaskEngineData);
 	}
 
 	public ProcessedData deserializeProcessed(File serializeFilename) throws Exception {

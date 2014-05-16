@@ -16,12 +16,18 @@ import com.google.common.collect.Multiset.Entry;
 public final class CSVSingleExporter {
 	public void export(ProcessedData data, File directory) throws Exception {
 		FileUtils.forceMkdir(directory);
-		
-		writePrims(data.time, new File(directory, "time.csv"));
-		writePrims(data.index, new File(directory, "index.csv"));
-		writeMultiset(data.index.kinds, new File(directory, "index-kinds.csv"));
-		writePrims(data.taskEngine, new File(directory, "taskengine.csv"));
-		writeMultiset(data.taskEngine.instructionKinds, new File(directory, "taskengine-kinds.csv"));
+
+		if(data.index != null) {
+			writePrims(data.index, new File(directory, "index.csv"));
+			writeMultiset(data.index.kinds, new File(directory, "index-kinds.csv"));
+		}
+		if(data.taskEngine != null) {
+			writePrims(data.taskEngine, new File(directory, "taskengine.csv"));
+			writeMultiset(data.taskEngine.instructionKinds, new File(directory, "taskengine-kinds.csv"));
+		}
+		if(data.time != null) {
+			writePrims(data.time, new File(directory, "time.csv"));
+		}
 	}
 
 	private void writePrims(Object object, File file) throws IllegalArgumentException, IllegalAccessException,
@@ -36,7 +42,7 @@ public final class CSVSingleExporter {
 		}
 		write(values, file);
 	}
-	
+
 	private void writeMultiset(Multiset<String> multiset, File file) throws IOException {
 		final Map<String, Object> values = Maps.newLinkedHashMap();
 		for(Entry<String> entry : multiset.entrySet()) {

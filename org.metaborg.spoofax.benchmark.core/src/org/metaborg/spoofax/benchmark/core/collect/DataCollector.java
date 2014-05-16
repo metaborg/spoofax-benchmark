@@ -2,6 +2,7 @@ package org.metaborg.spoofax.benchmark.core.collect;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -21,6 +22,7 @@ import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.interpreter.terms.ITermFactory;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Iterables;
 
 public final class DataCollector {
@@ -52,7 +54,7 @@ public final class DataCollector {
 		org.metaborg.sunshine.drivers.Main.initEnvironment(params);
 	}
 
-	public CollectedData collect(int warmupPhases) {
+	public CollectedData collect(int warmupPhases, int measurementPhases) {
 		final ServiceRegistry services = ServiceRegistry.INSTANCE();
 		final AnalysisService analyzer = services.getService(AnalysisService.class);
 		final LanguageService languages = services.getService(LanguageService.class);
@@ -62,16 +64,30 @@ public final class DataCollector {
 		final Collection<File> files =
 			FileUtils.listFiles(new File(projectDir), extensionFilter, TrueFileFilter.INSTANCE);
 
-		final Collection<AnalysisResult> analyzerResults = analyze(analyzer, files, warmupPhases);
-		if(Iterables.isEmpty(analyzerResults))
+		for(int i = 0; i < warmupPhases; ++i) {
+			analyze(analyzer, files);
+		}
+
+		final List<Collection<AnalysisResult>> allResults = Lists.newLinkedList();
+		for(int i = 0; i < measurementPhases; ++i) {
+			allResults.add(analyze(analyzer, files));
+		}
+		if(allResults.size() == 0)
 			throw new RuntimeException("Could not analyze files.");
+
+		final List<IStrategoTerm> rawResults = Lists.newLinkedList();
+		for(Collection<AnalysisResult> analyzerResults : allResults) {
+			rawResults.add(Iterables.getFirst(analyzerResults, null).rawResults());
+		}
+		final Collection<AnalysisResult> firstAnalyzerResults = allResults.get(0);
+		final IStrategoTerm firstRawResult = rawResults.get(0);
 
 		final CollectedData data = new CollectedData();
 		data.languageDirectory = languageDir;
 		data.languageName = languageName;
 		data.projectDirectory = projectDir;
 
-		for(AnalysisResult result : analyzerResults) {
+		for(final AnalysisResult result : firstAnalyzerResults) {
 			final FileData fileData = new FileData();
 			fileData.name = result.file().getAbsolutePath();
 			fileData.ast = result.ast();
@@ -80,43 +96,39 @@ public final class DataCollector {
 			}
 			data.files.add(fileData);
 		}
-		IStrategoTerm result = Iterables.getFirst(analyzerResults, null).rawResults();
 
 		final IndexManager indexManager = IndexManager.getInstance();
 		data.indexFile = indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).getAbsolutePath();
 		data.index = indexManager.loadIndex(projectDir, languageName, termFactory, agent);
-		data.indexEntriesAdded = Tools.asJavaInt(result.getSubterm(1).getSubterm(0));
-		data.indexEntriesRemoved = Tools.asJavaInt(result.getSubterm(1).getSubterm(1));
+		data.indexEntriesAdded = Tools.asJavaInt(firstRawResult.getSubterm(1).getSubterm(0));
+		data.indexEntriesRemoved = Tools.asJavaInt(firstRawResult.getSubterm(1).getSubterm(1));
 
 		final TaskManager taskManager = TaskManager.getInstance();
 		data.taskEngineFile =
 			taskManager.getTaskEngineFile(taskManager.getProjectURI(projectDir, agent)).getAbsolutePath();
 		data.taskEngine = taskManager.loadTaskEngine(projectDir, termFactory, agent);
-		data.tasksRemoved = Tools.asJavaInt(result.getSubterm(2).getSubterm(0));
-		data.tasksAdded = Tools.asJavaInt(result.getSubterm(2).getSubterm(1));
-		data.tasksInvalidated = Tools.asJavaInt(result.getSubterm(2).getSubterm(2));
-		data.evaluatedTasks = result.getSubterm(2).getSubterm(3).getSubtermCount();
-		data.skippedTasks = result.getSubterm(2).getSubterm(4).getSubtermCount();
-		data.unevaluatedTasks = result.getSubterm(2).getSubterm(5).getSubtermCount();
+		data.tasksRemoved = Tools.asJavaInt(firstRawResult.getSubterm(2).getSubterm(0));
+		data.tasksAdded = Tools.asJavaInt(firstRawResult.getSubterm(2).getSubterm(1));
+		data.tasksInvalidated = Tools.asJavaInt(firstRawResult.getSubterm(2).getSubterm(2));
+		data.evaluatedTasks = firstRawResult.getSubterm(2).getSubterm(3).getSubtermCount();
+		data.skippedTasks = firstRawResult.getSubterm(2).getSubterm(4).getSubtermCount();
+		data.unevaluatedTasks = firstRawResult.getSubterm(2).getSubterm(5).getSubtermCount();
 
-		data.time.parse = Tools.asJavaDouble(result.getSubterm(3).getSubterm(0));
-		data.time.collect = Tools.asJavaDouble(result.getSubterm(3).getSubterm(1));
-		data.time.taskEval = Tools.asJavaDouble(result.getSubterm(3).getSubterm(2));
-		data.time.indexPersist = Tools.asJavaDouble(result.getSubterm(3).getSubterm(3));
-		data.time.taskPersist = Tools.asJavaDouble(result.getSubterm(3).getSubterm(4));
+		for(final IStrategoTerm rawResult : rawResults) {
+			data.time.parse.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(0)));
+			data.time.collect.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(1)));
+			data.time.taskEval.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(2)));
+			data.time.indexPersist.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(3)));
+			data.time.taskPersist.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(4)));
+		}
 
 		return data;
 	}
 
-	private Collection<AnalysisResult> analyze(AnalysisService analyzer, Collection<File> files, int warmupPhases) {
-		Collection<AnalysisResult> results = null;
-		do {
-			resetIndex();
-			resetTaskEngine();
-			results = analyzer.analyze(files);
-			--warmupPhases;
-		} while(warmupPhases >= 0);
-		return results;
+	private Collection<AnalysisResult> analyze(AnalysisService analyzer, Collection<File> files) {
+		resetIndex();
+		resetTaskEngine();
+		return analyzer.analyze(files);
 	}
 
 	private IOFileFilter createExtensionFilter(Collection<String> extensions) {

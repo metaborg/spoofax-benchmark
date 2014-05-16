@@ -16,4 +16,11 @@ public class ProcessCommand {
 	@Parameter(names = { "--outfile", "-o" }, description = "File where the processed data should be stored.",
 		required = true)
 	public String outputFile;
+	
+	@Parameter(names = { "--notime", "-nt" }, description = "Don't process time data.")
+	public boolean dontProcessTimeData;
+	@Parameter(names = { "--noindex", "-ni" }, description = "Don't process index data.")
+	public boolean dontProcessIndexData;
+	@Parameter(names = { "--notaskengine", "-nte" }, description = "Don't process task engine data.")
+	public boolean dontProcessTaskEngineData;
 }

@@ -18,6 +18,8 @@ public class CollectArguments {
 	public String projectDirectory;
 
 
-	@Parameter(names = { "--warmup", "-w" }, description = "Number of warmup phases to perform.")
-	public int warmupPhases;
+	@Parameter(names = { "--warmups", "-w" }, description = "Number of warmup phases to perform before performing measurements.")
+	public int warmupPhases = 0;
+	@Parameter(names = { "--measurements", "-m" }, description = "Number of measurement phases to perform. Time data is averaged over all measurement phases.")
+	public int measurementPhases = 1;
 }

@@ -23,10 +23,10 @@ public class ImageHistoryExporter {
 	public void export(Iterable<ProcessedData> historicalData, File directory) throws IOException {
 		writeXYPlot(createTimeDataset(historicalData), new File(directory, "time.png"), "Speed of analysis over time",
 			"Datapoint", "Time in seconds");
-		
+
 		// size over time
-		
-		
+
+
 	}
 
 	private XYSeriesCollection createTimeDataset(Iterable<ProcessedData> historicalData) {
@@ -39,12 +39,12 @@ public class ImageHistoryExporter {
 
 		int i = 1;
 		for(ProcessedData data : historicalData) {
-			parseTimeSeries.add(i, data.time.parse);
-			collectTimeSeries.add(i, data.time.collect);
-			taskEvalTimeSeries.add(i, data.time.taskEval);
-			indexPersistTimeSeries.add(i, data.time.indexPersist);
-			taskPersistTimeSeries.add(i, data.time.taskPersist);
-			totalTimeSeries.add(i, data.time.total());
+			parseTimeSeries.add(i, data.time.parse.mean());
+			collectTimeSeries.add(i, data.time.collect.mean());
+			taskEvalTimeSeries.add(i, data.time.taskEval.mean());
+			indexPersistTimeSeries.add(i, data.time.indexPersist.mean());
+			taskPersistTimeSeries.add(i, data.time.taskPersist.mean());
+			totalTimeSeries.add(i, data.time.totalByMean());
 			++i;
 		}
 
@@ -58,7 +58,7 @@ public class ImageHistoryExporter {
 
 		return dataset;
 	}
-	
+
 	private void createMapsDataset(Iterable<Map<String, Number>> maps) {
 		final Map<String, XYSeries> allSeries = Maps.newHashMap();
 		int i = 1;
@@ -69,7 +69,7 @@ public class ImageHistoryExporter {
 					series = new XYSeries(entry.getKey());
 					allSeries.put(entry.getKey(), series);
 				}
-				
+
 				series.add(i, entry.getValue());
 			}
 			++i;

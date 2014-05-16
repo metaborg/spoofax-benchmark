@@ -19,10 +19,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 public final class DataProcessor {
-	public ProcessedData process(CollectedData rawData) {
-		final TimeData timeData = processTimeData(rawData);
-		final IndexData indexData = processIndexData(rawData);
-		final TaskEngineData taskEngineData = processTaskEngineData(rawData);
+	public ProcessedData process(CollectedData rawData, boolean processTimeData, boolean processIndexData,
+		boolean processTaskEngineData) {
+		final TimeData timeData = processTimeData ? processTimeData(rawData) : null;
+		final IndexData indexData = processIndexData ? processIndexData(rawData) : null;
+		final TaskEngineData taskEngineData = processTaskEngineData ? processTaskEngineData(rawData) : null;
 
 		return new ProcessedData(timeData, indexData, taskEngineData);
 	}
@@ -95,8 +96,8 @@ public final class DataProcessor {
 				getOrCreate(data.allDependenciesPerKind, kind, new TaskDependencyData()))) {
 				processDependencyTrails(data, kind, rawData.taskEngine, taskID);
 			}
-			data.dependencyKind.add("Static", (int)data.staticDependencies.size);
-			data.dependencyKind.add("Dynamic", (int)data.dynamicDependencies.size);
+			data.dependencyKind.add("Static", (int) data.staticDependencies.size);
+			data.dependencyKind.add("Dynamic", (int) data.dynamicDependencies.size);
 
 			data.taskStatusKinds.add(task.status().name());
 			final long numResults = task.results().size();

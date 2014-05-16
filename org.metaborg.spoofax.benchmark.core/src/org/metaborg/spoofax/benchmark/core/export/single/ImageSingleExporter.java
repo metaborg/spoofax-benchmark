@@ -25,9 +25,12 @@ public class ImageSingleExporter {
 	public void export(ProcessedData data, File directory) throws IOException {
 		FileUtils.forceMkdir(directory);
 
-		exportIndex(data, directory);
-		exportTaskEngine(data, directory);
-		exportTime(data, directory);
+		if(data.index != null)
+			exportIndex(data, directory);
+		if(data.taskEngine != null)
+			exportTaskEngine(data, directory);
+		if(data.time != null)
+			exportTime(data, directory);
 	}
 
 	private void exportIndex(ProcessedData data, File directory) throws IOException {
@@ -131,11 +134,11 @@ public class ImageSingleExporter {
 
 	private void exportTime(ProcessedData data, File directory) throws IOException {
 		final Map<String, Number> timeMap = Maps.newLinkedHashMap();
-		timeMap.put("Parse", data.time.parse);
-		timeMap.put("Collect", data.time.collect);
-		timeMap.put("Perform", data.time.taskEval);
-		timeMap.put("Persist index", data.time.indexPersist);
-		timeMap.put("Persist task engine", data.time.taskPersist);
+		timeMap.put("Parse", data.time.parse.mean());
+		timeMap.put("Collect", data.time.collect.mean());
+		timeMap.put("Perform", data.time.taskEval.mean());
+		timeMap.put("Persist index", data.time.indexPersist.mean());
+		timeMap.put("Persist task engine", data.time.taskPersist.mean());
 		writePie(createMapDataset(timeMap), new File(directory, "time.png"), "Absolute time taken for each phase",
 			"0.000s", "0%");
 	}

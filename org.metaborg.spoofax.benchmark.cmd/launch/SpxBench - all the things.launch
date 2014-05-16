@@ -12,7 +12,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.metaborg.spoofax.benchmark.cmd.Main"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="process&#10;--indir=/Users/gohla/Spoofax/Workspaces/Spoofax/java-single-ex/collect&#10;--outfile=/Users/gohla/Spoofax/Workspaces/Spoofax/java-single-ex/processed/processed.dat&#10;--noindex&#10;--notaskengine"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="collect&#10;--langdir=/Users/gohla/Spoofax/Repositories/github.com/java-front/java-front&#10;--langname=Java &#10;--projdir=/Users/gohla/Spoofax/Workspaces/Spoofax/java-single-ex&#10;--outdir=/Users/gohla/Spoofax/Workspaces/Spoofax/java-single-ex/collect&#10;--warmups=15&#10;--measurements=5&#10;|||&#10;process&#10;--indir=/Users/gohla/Spoofax/Workspaces/Spoofax/java-single-ex/collect&#10;--outfile=/Users/gohla/Spoofax/Workspaces/Spoofax/java-single-ex/processed/processed.dat&#10;--noindex&#10;--notaskengine&#10;|||&#10;export-single&#10;--infile=/Users/gohla/Spoofax/Workspaces/Spoofax/java-single-ex/processed/processed.dat&#10;--outdir=/Users/gohla/Spoofax/Workspaces/Spoofax/java-single-ex/benchmark&#10;--outfmt=image"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.metaborg.spoofax.benchmark.cmd"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-server&#10;-Xss16m&#10;-Xms2G&#10;-Xmx2G"/>
 </launchConfiguration>
