@@ -1,13 +1,13 @@
-Spoofax benchmark (spxbench)
+Spoofax benchmarker (spxbench)
 =================
 
 Tools for benchmarking Spoofax projects.
 
 # Usage
 
-First download the latest JAR of spxbench from the releases section: https://github.com/metaborg/spoofax-benchmark/releases
+First download the latest JAR of spxbench from the releases section: [https://github.com/metaborg/spoofax-benchmark/releases]().
 
-spxbench is a command line tool, to get help on its commands and options, just run the jar file with java with the `-h` option:
+Spoofax benchmarker is a command line tool, to get help on its commands and options, just run the jar file with java using the `-h` option:
 
 
     java -jar spxbench.jar -h
@@ -87,3 +87,40 @@ Commands are executed by using the command name as the first argument, followed 
     java -jar spxbench.jar collect --langdir=./java-front --langname=Java --projdir=./java-examples --outdir./benchmark/collect
     
     
+# Benchmarking a Spoofax project
+
+Benchmarking consists of collecting data, processing that data, and then exporting the processed data into a readable format, such as a report or images. To do this all in one go, invoke the following:
+
+    java -jar spxbench.jar \
+      collect \
+        --langdir=$LANG_LOC \
+        --langname=$LANG_NAME \
+        --projdir=$PROJ_LOC \
+        --outdir=$PROJ_LOC/collect \
+        --warmups=10 \
+        --measurements=30 \
+    ||| \
+      process \
+        --indir=$PROJ_LOC/collect \
+        --outfile=$PROJ_LOC/processed/processed.dat \
+        --noindex \
+        --notaskengine \
+    ||| \
+      export-single \
+        --infile=$PROJ_LOC/processed/processed.dat \
+        --outdir=$PROJ_LOC/benchmark \
+        --outfmt=image \
+
+where 
+* `$LANG_LOC` is the location of the Spoofax project of the language you are benchmarking.
+* `$LANG_NAME` is the name of that language.
+* `$PROJ_LOC` is the location of the project that contains the test files.
+
+Spoofax benchmarker will:
+1. load the language at the given location
+2. analyze all files at the project location
+3. collect raw data during analysis
+4. store the collected raw data in `$PROJ_LOC/collect`
+5. process the collected data and store it in `$PROJ_LOC/processed/processed.dat`
+6. export the processed data to images in `$PROJ_LOC/benchmark`
+
