@@ -36,12 +36,12 @@ public class Main {
 			try {
 				jc.parse(args);
 			} catch(ParameterException e) {
-				error(jc, e.getMessage());
+				error(jc, e, true);
 				return;
 			}
 
 			if(common.help) {
-				error(jc, null);
+				error(jc, null, true);
 				return;
 			}
 
@@ -93,16 +93,19 @@ public class Main {
 					}
 				}
 			} catch(Exception e) {
-				error(jc, e.getMessage());
+				error(jc, e, false);
 				return;
 			}
 		}
 	}
 
-	private static void error(JCommander jc, String message) {
-		if(message != null)
-			System.out.println(message);
-		jc.usage();
+	private static void error(JCommander jc, Exception exception, boolean showUsage) {
+		if(exception != null) {
+			exception.printStackTrace(System.err);
+		}
+		if(showUsage) {
+			jc.usage();
+		}
 		System.exit(1);
 	}
 

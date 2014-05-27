@@ -116,10 +116,12 @@ public final class DataCollector {
 
 		for(final IStrategoTerm rawResult : rawResults) {
 			data.time.parse.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(0)));
-			data.time.collect.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(1)));
-			data.time.taskEval.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(2)));
-			data.time.indexPersist.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(3)));
-			data.time.taskPersist.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(4)));
+			data.time.preTrans.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(1)));
+			data.time.collect.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(2)));
+			data.time.taskEval.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(3)));
+			data.time.postTrans.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(4)));
+			data.time.indexPersist.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(5)));
+			data.time.taskPersist.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(6)));
 		}
 
 		return data;

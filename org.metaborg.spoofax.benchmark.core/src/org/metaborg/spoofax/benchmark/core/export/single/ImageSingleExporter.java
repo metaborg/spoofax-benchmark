@@ -135,8 +135,10 @@ public class ImageSingleExporter {
 	private void exportTime(ProcessedData data, File directory) throws IOException {
 		final Map<String, Number> timeMap = Maps.newLinkedHashMap();
 		timeMap.put("Parse", data.time.parse.mean());
+		timeMap.put("Pre-trans", data.time.preTrans.mean());
 		timeMap.put("Collect", data.time.collect.mean());
 		timeMap.put("Perform", data.time.taskEval.mean());
+		timeMap.put("Post-trans", data.time.postTrans.mean());
 		timeMap.put("Persist index", data.time.indexPersist.mean());
 		timeMap.put("Persist task engine", data.time.taskPersist.mean());
 		writePie(createMapDataset(timeMap), new File(directory, "time.png"), "Absolute time taken for each phase",
