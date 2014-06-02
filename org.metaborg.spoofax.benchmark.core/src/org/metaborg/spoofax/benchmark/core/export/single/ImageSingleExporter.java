@@ -158,7 +158,7 @@ public class ImageSingleExporter {
 	private DefaultPieDataset createMapDataset(Map<String, Number> map) {
 		final DefaultPieDataset dataset = new DefaultPieDataset();
 		for(java.util.Map.Entry<String, Number> entry : map.entrySet()) {
-			dataset.setValue(entry.getKey(), (Number) entry.getValue());
+			dataset.setValue(entry.getKey(), entry.getValue());
 		}
 		dataset.sortByValues(SortOrder.DESCENDING);
 		return dataset;
