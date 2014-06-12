@@ -15,11 +15,13 @@ import org.metaborg.sunshine.model.messages.IMessage;
 import org.metaborg.sunshine.services.analyzer.AnalysisResult;
 import org.metaborg.sunshine.services.analyzer.AnalysisService;
 import org.metaborg.sunshine.services.language.LanguageService;
+import org.metaborg.sunshine.services.parser.ParserService;
 import org.spoofax.interpreter.core.Tools;
 import org.spoofax.interpreter.library.IOAgent;
 import org.spoofax.interpreter.library.index.IndexManager;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.interpreter.terms.ITermFactory;
+import org.spoofax.terms.attachments.TermAttachmentStripper;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.internal.Lists;
@@ -56,8 +58,9 @@ public final class DataCollector {
 
 	public CollectedData collect(int warmupPhases, int measurementPhases) {
 		final ServiceRegistry services = ServiceRegistry.INSTANCE();
-		final AnalysisService analyzer = services.getService(AnalysisService.class);
 		final LanguageService languages = services.getService(LanguageService.class);
+		final ParserService parser = services.getService(ParserService.class);
+		final AnalysisService analyzer = services.getService(AnalysisService.class);
 
 		final IOFileFilter extensionFilter =
 			createExtensionFilter(languages.getLanguageByName(languageName).getFileExtensions());
@@ -65,12 +68,12 @@ public final class DataCollector {
 			FileUtils.listFiles(new File(projectDir), extensionFilter, TrueFileFilter.INSTANCE);
 
 		for(int i = 0; i < warmupPhases; ++i) {
-			analyze(analyzer, files);
+			analyze(parser, analyzer, files);
 		}
 
 		final List<Collection<AnalysisResult>> allResults = Lists.newLinkedList();
 		for(int i = 0; i < measurementPhases; ++i) {
-			allResults.add(analyze(analyzer, files));
+			allResults.add(analyze(parser, analyzer, files));
 		}
 		if(allResults.size() == 0)
 			throw new RuntimeException("Could not analyze files.");
@@ -87,10 +90,11 @@ public final class DataCollector {
 		data.languageName = languageName;
 		data.projectDirectory = projectDir;
 
+		final TermAttachmentStripper attachmentStripper = new TermAttachmentStripper(termFactory);
 		for(final AnalysisResult result : firstAnalyzerResults) {
 			final FileData fileData = new FileData();
 			fileData.name = result.file().getAbsolutePath();
-			fileData.ast = result.ast();
+			fileData.ast = attachmentStripper.strip(result.ast());
 			for(IMessage message : result.messages()) {
 				fileData.messages.add(message.message());
 			}
@@ -131,10 +135,16 @@ public final class DataCollector {
 		return data;
 	}
 
-	private Collection<AnalysisResult> analyze(AnalysisService analyzer, Collection<File> files) {
+	private Collection<AnalysisResult> analyze(ParserService parser, AnalysisService analyzer, Collection<File> files) {
 		resetIndex();
 		resetTaskEngine();
-		return analyzer.analyze(files);
+
+		final Collection<AnalysisResult> parseResults = Lists.newLinkedList();
+		for(File file : files) {
+			parseResults.add(parser.parseFile(file));
+		}
+
+		return analyzer.analyze(parseResults);
 	}
 
 	private IOFileFilter createExtensionFilter(Collection<String> extensions) {
