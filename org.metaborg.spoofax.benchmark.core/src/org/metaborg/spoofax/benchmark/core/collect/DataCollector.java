@@ -97,31 +97,35 @@ public final class DataCollector {
 			data.files.add(fileData);
 		}
 
+		final IStrategoTerm firstDebugResult = firstRawResult.getSubterm(2);
+		final IStrategoTerm firstCollectDebugResult = firstDebugResult.getSubterm(0);
+
 		final IndexManager indexManager = IndexManager.getInstance();
 		data.indexFile = indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).getAbsolutePath();
 		data.index = indexManager.loadIndex(projectDir, languageName, termFactory, agent);
-		data.indexEntriesAdded = Tools.asJavaInt(firstRawResult.getSubterm(1).getSubterm(0));
-		data.indexEntriesRemoved = Tools.asJavaInt(firstRawResult.getSubterm(1).getSubterm(1));
+		data.indexEntriesRemoved = Tools.asJavaInt(firstCollectDebugResult.getSubterm(0));
+		data.indexEntriesAdded = Tools.asJavaInt(firstCollectDebugResult.getSubterm(1));
 
 		final TaskManager taskManager = TaskManager.getInstance();
 		data.taskEngineFile =
 			taskManager.getTaskEngineFile(taskManager.getProjectURI(projectDir, agent)).getAbsolutePath();
 		data.taskEngine = taskManager.loadTaskEngine(projectDir, termFactory, agent);
-		data.tasksRemoved = Tools.asJavaInt(firstRawResult.getSubterm(2).getSubterm(0));
-		data.tasksAdded = Tools.asJavaInt(firstRawResult.getSubterm(2).getSubterm(1));
-		data.tasksInvalidated = Tools.asJavaInt(firstRawResult.getSubterm(2).getSubterm(2));
-		data.evaluatedTasks = firstRawResult.getSubterm(2).getSubterm(3).getSubtermCount();
-		data.skippedTasks = firstRawResult.getSubterm(2).getSubterm(4).getSubtermCount();
-		data.unevaluatedTasks = firstRawResult.getSubterm(2).getSubterm(5).getSubtermCount();
+		data.tasksRemoved = Tools.asJavaInt(firstCollectDebugResult.getSubterm(0));
+		data.tasksAdded = Tools.asJavaInt(firstCollectDebugResult.getSubterm(1));
+		data.tasksInvalidated = Tools.asJavaInt(firstCollectDebugResult.getSubterm(2));
+		data.evaluatedTasks = firstDebugResult.getSubterm(1).getSubtermCount();
+		data.skippedTasks = firstDebugResult.getSubterm(2).getSubtermCount();
+		data.unevaluatedTasks = firstDebugResult.getSubterm(3).getSubtermCount();
 
 		for(final IStrategoTerm rawResult : rawResults) {
-			data.time.parse.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(0)));
-			data.time.preTrans.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(1)));
-			data.time.collect.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(2)));
-			data.time.taskEval.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(3)));
-			data.time.postTrans.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(4)));
-			data.time.indexPersist.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(5)));
-			data.time.taskPersist.add(Tools.asJavaDouble(rawResult.getSubterm(3).getSubterm(6)));
+			final IStrategoTerm timeResult = rawResult.getSubterm(3);
+			data.time.parse.add((long) Tools.asJavaDouble(timeResult.getSubterm(0)));
+			data.time.preTrans.add((long) Tools.asJavaDouble(timeResult.getSubterm(1)));
+			data.time.collect.add((long) Tools.asJavaDouble(timeResult.getSubterm(2)));
+			data.time.taskEval.add((long) Tools.asJavaDouble(timeResult.getSubterm(3)));
+			data.time.postTrans.add((long) Tools.asJavaDouble(timeResult.getSubterm(4)));
+			data.time.indexPersist.add((long) Tools.asJavaDouble(timeResult.getSubterm(5)));
+			data.time.taskPersist.add((long) Tools.asJavaDouble(timeResult.getSubterm(6)));
 		}
 
 		return data;
