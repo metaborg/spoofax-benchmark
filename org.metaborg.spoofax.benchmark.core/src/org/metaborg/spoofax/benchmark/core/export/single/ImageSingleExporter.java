@@ -135,17 +135,12 @@ public class ImageSingleExporter {
 	private void exportTime(ProcessedData data, File directory) throws IOException {
 		final Map<String, Number> timeMap = Maps.newLinkedHashMap();
 		final int toSeconds = 1000000000;
-		timeMap.put("Parse", data.time.parse.mean() / toSeconds);
-		timeMap.put("Pre-trans", data.time.preTrans.mean() / toSeconds);
-		timeMap.put("Collect", data.time.collect.mean() / toSeconds);
-		timeMap.put("Perform", data.time.taskEval.mean() / toSeconds);
-		timeMap.put("Post-trans", data.time.postTrans.mean() / toSeconds);
-		timeMap.put("Persist index", data.time.indexPersist.mean() / toSeconds);
-		timeMap.put("Persist task engine", data.time.taskPersist.mean() / toSeconds);
+		for(java.util.Map.Entry<String, MathLongList> entry : data.time.map.entrySet()) {
+			timeMap.put(entry.getKey(), entry.getValue().mean() / toSeconds);
+		}
 		writePie(createMapDataset(timeMap), new File(directory, "time.png"), "Absolute time taken for each phase",
 			"0.00000s", "0.00%");
 	}
-
 
 	private DefaultPieDataset createMultisetDataset(Multiset<String> multiset) {
 		final DefaultPieDataset dataset = new DefaultPieDataset();

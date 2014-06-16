@@ -16,6 +16,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
+import org.metaborg.spoofax.benchmark.core.util.MathLongList;
 
 import com.beust.jcommander.internal.Maps;
 
@@ -30,31 +31,21 @@ public class ImageHistoryExporter {
 	}
 
 	private XYSeriesCollection createTimeDataset(Iterable<ProcessedData> historicalData) {
-		final XYSeries parseTimeSeries = new XYSeries("Parse");
-		final XYSeries collectTimeSeries = new XYSeries("Collect");
-		final XYSeries taskEvalTimeSeries = new XYSeries("Task eval");
-		final XYSeries indexPersistTimeSeries = new XYSeries("Index persist");
-		final XYSeries taskPersistTimeSeries = new XYSeries("Task engine persist");
-		final XYSeries totalTimeSeries = new XYSeries("Total");
+		final XYSeriesCollection dataset = new XYSeriesCollection();
+		final Map<String, XYSeries> allSeries = Maps.newHashMap();
 
 		int i = 1;
 		for(ProcessedData data : historicalData) {
-			parseTimeSeries.add(i, data.time.parse.mean());
-			collectTimeSeries.add(i, data.time.collect.mean());
-			taskEvalTimeSeries.add(i, data.time.taskEval.mean());
-			indexPersistTimeSeries.add(i, data.time.indexPersist.mean());
-			taskPersistTimeSeries.add(i, data.time.taskPersist.mean());
-			totalTimeSeries.add(i, data.time.totalByMean());
+			for(Entry<String, MathLongList> entry : data.time.map.entrySet()) {
+				XYSeries series = allSeries.get(entry.getKey());
+				if(series == null) {
+					series = new XYSeries(entry.getKey());
+					dataset.addSeries(series);
+				}
+				series.add(i, entry.getValue().mean());
+			}
 			++i;
 		}
-
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(parseTimeSeries);
-		dataset.addSeries(collectTimeSeries);
-		dataset.addSeries(taskEvalTimeSeries);
-		dataset.addSeries(indexPersistTimeSeries);
-		dataset.addSeries(taskPersistTimeSeries);
-		dataset.addSeries(totalTimeSeries);
 
 		return dataset;
 	}

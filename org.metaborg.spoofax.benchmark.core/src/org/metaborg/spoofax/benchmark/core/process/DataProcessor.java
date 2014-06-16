@@ -57,8 +57,8 @@ public final class DataProcessor {
 
 		data.numPartitions = Iterables.size(rawData.index.getAllPartitions());
 
-		data.entriesAdded = rawData.indexEntriesAdded;
-		data.entriesRemoved = rawData.indexEntriesRemoved;
+		data.entriesAdded = rawData.debug.indexEntriesAdded;
+		data.entriesRemoved = rawData.debug.indexEntriesRemoved;
 
 		data.diskSize = new File(rawData.indexFile).length() / 1000000.0;
 		data.memSize = RamUsageEstimator.sizeOf(rawData.index) / 1000000.0;
@@ -107,12 +107,12 @@ public final class DataProcessor {
 
 		data.numSources = Iterables.size(rawData.taskEngine.getAllSources());
 
-		data.tasksRemoved = rawData.tasksRemoved;
-		data.tasksAdded = rawData.tasksAdded;
-		data.tasksInvalidated = rawData.tasksInvalidated;
-		data.evaluatedTasks = rawData.evaluatedTasks;
-		data.skippedTasks = rawData.skippedTasks;
-		data.unevaluatedTasks = rawData.unevaluatedTasks;
+		data.tasksRemoved = rawData.debug.tasksRemoved;
+		data.tasksAdded = rawData.debug.tasksAdded;
+		data.tasksInvalidated = rawData.debug.tasksInvalidated;
+		data.evaluatedTasks = rawData.debug.evaluatedTasks.getSubtermCount();
+		data.skippedTasks = rawData.debug.skippedTasks.getSubtermCount();
+		data.unevaluatedTasks = rawData.debug.unevaluatedTasks.getSubtermCount();
 
 		data.diskSize = new File(rawData.taskEngineFile).length() / 1000000.0;
 		data.memSize = RamUsageEstimator.sizeOf(rawData.taskEngine) / 1000000.0;
