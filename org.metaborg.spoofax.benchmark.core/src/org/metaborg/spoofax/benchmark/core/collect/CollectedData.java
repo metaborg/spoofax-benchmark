@@ -25,5 +25,5 @@ public final class CollectedData implements Serializable {
 	public transient ITaskEngine taskEngine;
 
 	public AnalysisDebugResult debug;
-	public TimeData time;
+	public final TimeData time = new TimeData();
 }
