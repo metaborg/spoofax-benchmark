@@ -1,6 +1,7 @@
 package org.metaborg.spoofax.benchmark.core.collect;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,6 +9,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.metaborg.runtime.task.engine.TaskManager;
 import org.metaborg.sunshine.environment.ServiceRegistry;
 import org.metaborg.sunshine.environment.SunshineMainArguments;
@@ -41,12 +46,18 @@ public final class DataCollector {
 		this.agent = agent;
 		this.termFactory = termFactory;
 
+		// Make logger stfu
+		LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+		LoggerConfig logger = ctx.getConfiguration().getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
+		logger.setLevel(Level.ERROR);
+		ctx.updateLoggers();
+
 		// Setup sunshine
 		org.metaborg.sunshine.drivers.Main.jc = new JCommander();
-		String[] sunshineArgs =
+		final String[] sunshineArgs =
 			new String[] { "--project", projectDir, "--auto-lang", languageDir, "--observer", "analysis-default-cmd",
 				"--non-incremental" };
-		SunshineMainArguments params = new SunshineMainArguments();
+		final SunshineMainArguments params = new SunshineMainArguments();
 		final boolean argsFine = org.metaborg.sunshine.drivers.Main.parseArguments(sunshineArgs, params);
 		if(!argsFine) {
 			System.exit(1);
@@ -124,6 +135,7 @@ public final class DataCollector {
 	private Collection<AnalysisResult> analyze(ParserService parser, AnalysisService analyzer, Collection<File> files) {
 		resetIndex();
 		resetTaskEngine();
+		forceGC();
 
 		final Collection<AnalysisFileResult> parseResults = Lists.newLinkedList();
 		for(File file : files) {
@@ -152,5 +164,14 @@ public final class DataCollector {
 		final TaskManager taskManager = TaskManager.getInstance();
 		taskManager.unloadTaskEngine(projectDir, agent);
 		taskManager.getTaskEngineFile(taskManager.getProjectURI(projectDir, agent)).delete();
+	}
+
+	private void forceGC() {
+		Object obj = new Object();
+		WeakReference<Object> ref = new WeakReference<Object>(obj);
+		obj = null;
+		while(ref.get() != null) {
+			System.gc();
+		}
 	}
 }
