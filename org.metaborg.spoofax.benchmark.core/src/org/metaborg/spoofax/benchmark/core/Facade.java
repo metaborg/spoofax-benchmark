@@ -22,7 +22,7 @@ public final class Facade {
 	private final ITermFactory termFactory;
 
 	private final CollectedDataSerializer collectedSerializer;
-	private final ProcessedDataSerializer processedSerializer = new ProcessedDataSerializer();
+	private final ProcessedDataSerializer processedSerializer;
 
 	private final DataProcessor processor = new DataProcessor();
 
@@ -33,9 +33,10 @@ public final class Facade {
 
 
 	public Facade() {
-		this.termFactory = new ImploderOriginTermFactory(new TermFactory());
 		this.agent = new IOAgent();
-		this.collectedSerializer = new CollectedDataSerializer(termFactory, agent);
+		this.termFactory = new ImploderOriginTermFactory(new TermFactory());
+		this.collectedSerializer = new CollectedDataSerializer(termFactory);
+		this.processedSerializer = new ProcessedDataSerializer();
 	}
 
 

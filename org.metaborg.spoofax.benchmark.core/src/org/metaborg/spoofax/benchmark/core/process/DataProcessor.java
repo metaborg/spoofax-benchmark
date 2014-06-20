@@ -37,13 +37,14 @@ public final class DataProcessor {
 		final Iterable<IndexEntry> entries = rawData.index.getAll();
 
 		for(final IndexEntry entry : entries) {
-			final String kind = entry.getKey().getConstructor().getName();
+			final IStrategoAppl key = (IStrategoAppl) entry.key;
+			final String kind = key.getConstructor().getName();
 			data.kinds.add(kind);
 			++data.numEntries;
 
-			final IStrategoTerm identifier = entry.getKey().getIdentifier();
-			if(Tools.isTermAppl(identifier) && Tools.hasConstructor((IStrategoAppl) identifier, "URI", 2)) {
-				final IStrategoTerm segments = identifier.getSubterm(1);
+			final IStrategoTerm uri = key.getSubterm(0);
+			if(Tools.isTermAppl(uri) && Tools.hasConstructor((IStrategoAppl) uri, "URI", 2)) {
+				final IStrategoTerm segments = uri.getSubterm(1);
 				final long length = segments.getSubtermCount();
 				data.uriLength.add(length);
 				addToList(data.uriLengthPerKind, kind, length);
@@ -55,7 +56,7 @@ public final class DataProcessor {
 			}
 		}
 
-		data.numPartitions = Iterables.size(rawData.index.getAllPartitions());
+		data.numPartitions = Iterables.size(rawData.index.getAllSources());
 
 		data.entriesAdded = rawData.debug.indexEntriesAdded;
 		data.entriesRemoved = rawData.debug.indexEntriesRemoved;

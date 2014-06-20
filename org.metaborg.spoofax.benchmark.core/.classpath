@@ -12,10 +12,12 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.metaborg.sunshine"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.17/lib/jcommon-1.0.21.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.17/lib/jfreechart-1.0.17.jar" sourcepath="lib/jfreechart-1.0.17/source"/>
-	<classpathentry kind="lib" path="lib/fst-1.54.jar" sourcepath="lib/fst-1.54-sources.jar">
+	<classpathentry kind="lib" path="lib/kryo-2.24.0/kryo-2.24.0.jar" sourcepath="lib/kryo-2.24.0/kryo-2.24.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/org.metaborg.spoofax.benchmark.core/lib/fst-1.54-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/org.metaborg.spoofax.benchmark.core/lib/kryo-2.24.0/kryo-2.24.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/kryo-2.24.0/lib/minlog-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/kryo-2.24.0/lib/objenesis-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
