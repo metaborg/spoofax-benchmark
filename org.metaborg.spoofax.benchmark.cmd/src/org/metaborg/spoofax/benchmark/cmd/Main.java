@@ -40,7 +40,9 @@ public class Main {
 				return;
 			}
 
-			if(common.help) {
+			final String command = jc.getParsedCommand();
+			
+			if(common.help || command == null) {
 				error(jc, null, true);
 				return;
 			}
@@ -48,7 +50,7 @@ public class Main {
 			try {
 				final Facade facade = new Facade();
 
-				switch(jc.getParsedCommand()) {
+				switch(command) {
 					case CollectCommand.NAME: {
 						facade.collectAndSerialize(cmdSerialize.collectArguments.languageDirectory,
 							cmdSerialize.collectArguments.languageName, cmdSerialize.collectArguments.projectDirectory,
