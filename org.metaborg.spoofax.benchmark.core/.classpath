@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="dep/java-sizeof/src/main/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.interpreter.core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.terms"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.metaborg.runtime.task"/>
@@ -10,14 +13,11 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.interpreter.library.index"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.jsglr"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.metaborg.sunshine"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.17/lib/jcommon-1.0.21.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.17/lib/jfreechart-1.0.17.jar" sourcepath="lib/jfreechart-1.0.17/source"/>
-	<classpathentry kind="lib" path="lib/kryo-2.24.0/kryo-2.24.0.jar" sourcepath="lib/kryo-2.24.0/kryo-2.24.0-sources.jar">
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/org.metaborg.spoofax.benchmark.core/lib/kryo-2.24.0/kryo-2.24.0-javadoc.jar!/"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/kryo-2.24.0/lib/minlog-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/kryo-2.24.0/lib/objenesis-1.2.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

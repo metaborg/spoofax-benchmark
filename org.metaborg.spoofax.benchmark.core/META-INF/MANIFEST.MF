@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1410208106134
+Build-Jdk: 1.8.0
+Built-By: gohla
+Bundle-Description: Maven parent POM for Java projects
+Bundle-License: https://www.gnu.org/licenses/lgpl-2.1.html
+Bundle-ManifestVersion: 2
+Bundle-Name: org.metaborg.spoofax.benchmark.core
+Bundle-SymbolicName: org.metaborg.spoofax.benchmark.core
+Bundle-Version: 1.2.0.qualifier
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.metaborg.spoofax.benchmark.core;version="1.2.0",org.
+ metaborg.spoofax.benchmark.core.collect;version="1.2.0",org.metaborg.sp
+ oofax.benchmark.core.export.history;version="1.2.0",org.metaborg.spoofa
+ x.benchmark.core.export.single;version="1.2.0",org.metaborg.spoofax.ben
+ chmark.core.process;version="1.2.0",org.metaborg.spoofax.benchmark.core
+ .util;version="1.2.0"
+Import-Package: com.beust.jcommander;version="[1.35,2)",com.beust.jcomma
+ nder.internal;version="[1.35,2)",com.carrotsearch.sizeof,com.esotericso
+ ftware.kryo;version="[2.24,3)",com.esotericsoftware.kryo.io;version="[2
+ .24,3)",com.google.common.collect;version="[17.0,18)",org.apache.common
+ s.io;version="[1.4,2)",org.apache.commons.io.filefilter;version="[1.4,2
+ )",org.apache.logging.log4j;version="[2.0,3)",org.apache.logging.log4j.
+ core;version="[2.0,3)",org.apache.logging.log4j.core.config;version="[2
+ .0,3)",org.apache.logging.log4j.spi;version="[2.0,3)",org.jfree.chart,o
+ rg.jfree.chart.axis,org.jfree.chart.labels,org.jfree.chart.plot,org.jfr
+ ee.chart.renderer.xy,org.jfree.data.general,org.jfree.data.xy,org.jfree
+ .util,org.metaborg.runtime.task,org.metaborg.runtime.task.engine,org.me
+ taborg.sunshine.drivers,org.metaborg.sunshine.environment,org.metaborg.
+ sunshine.model.messages,org.metaborg.sunshine.services.analyzer,org.met
+ aborg.sunshine.services.language,org.metaborg.sunshine.services.parser,
+ org.objenesis.strategy;version="[2.1,3)",org.spoofax.interpreter.core,o
+ rg.spoofax.interpreter.library,org.spoofax.interpreter.library.index,or
+ g.spoofax.interpreter.terms,org.spoofax.jsglr.client.imploder,org.spoof
+ ax.terms,org.spoofax.terms.attachments
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Tool: Bnd-2.3.0.201405100607

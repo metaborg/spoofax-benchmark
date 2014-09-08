@@ -11,8 +11,10 @@
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
+<stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.metaborg.spoofax.benchmark.cmd.Main"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="collect&#13;&#10;--langdir=${project_loc:/java-front}&#13;&#10;--langname=Java &#13;&#10;--projdir=${project_loc}&#13;&#10;--outdir=${project_loc}/collect&#13;&#10;--warmups=10&#13;&#10;--measurements=30&#13;&#10;|||&#13;&#10;process&#13;&#10;--indir=${project_loc}/collect&#13;&#10;--outfile=${project_loc}/processed/processed.dat&#10;--noindex&#10;--notaskengine&#13;&#10;|||&#13;&#10;export-single&#13;&#10;--infile=${project_loc}/processed/processed.dat&#13;&#10;--outdir=${project_loc}/benchmark&#13;&#10;--outfmt=image"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.metaborg.spoofax.benchmark.cmd"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-server&#13;&#10;-Xss16m&#13;&#10;-Xms2G&#13;&#10;-Xmx2G"/>
 </launchConfiguration>
