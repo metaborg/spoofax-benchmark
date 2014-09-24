@@ -112,12 +112,14 @@ Benchmarking consists of collecting data, processing that data, and then exporti
         --outdir=$PROJ_LOC/benchmark \
         --outfmt=image
 
-where 
+where
+
 * `$LANG_LOC` is the location of the Spoofax project of the language you are benchmarking.
 * `$LANG_NAME` is the name of that language.
 * `$PROJ_LOC` is the location of the project that contains the test files.
 
 Spoofax benchmarker will:
+
 1. load the language at the given location
 2. analyze all files at the project location
 3. collect raw data during analysis
