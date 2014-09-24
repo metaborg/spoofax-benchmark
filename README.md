@@ -84,7 +84,8 @@ which will output the command line usage information:
 Commands are executed by using the command name as the first argument, followed by any options of that command. For example, to execute the `collect` command, use:
 
 
-    java -jar spxbench.jar collect --langdir=./java-front --langname=Java --projdir=./java-examples --outdir./benchmark/collect
+    java -jar spxbench.jar collect --langdir=./java-front --langname=Java \
+		--projdir=./java-examples --outdir./benchmark/collect
     
     
 # Benchmarking a Spoofax project
@@ -99,24 +100,26 @@ Benchmarking consists of collecting data, processing that data, and then exporti
         --outdir=$PROJ_LOC/collect \
         --warmups=10 \
         --measurements=30 \
-    ||| \
+    "|||" \
       process \
         --indir=$PROJ_LOC/collect \
         --outfile=$PROJ_LOC/processed/processed.dat \
         --noindex \
         --notaskengine \
-    ||| \
+    "|||" \
       export-single \
         --infile=$PROJ_LOC/processed/processed.dat \
         --outdir=$PROJ_LOC/benchmark \
-        --outfmt=image \
+        --outfmt=image
 
-where 
+where
+
 * `$LANG_LOC` is the location of the Spoofax project of the language you are benchmarking.
 * `$LANG_NAME` is the name of that language.
 * `$PROJ_LOC` is the location of the project that contains the test files.
 
 Spoofax benchmarker will:
+
 1. load the language at the given location
 2. analyze all files at the project location
 3. collect raw data during analysis
