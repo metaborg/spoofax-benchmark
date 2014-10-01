@@ -6,13 +6,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.interpreter.core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.terms"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.metaborg.runtime.task"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.interpreter.externaldeps"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.interpreter.library.index"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.spoofax.jsglr"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.metaborg.sunshine"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
