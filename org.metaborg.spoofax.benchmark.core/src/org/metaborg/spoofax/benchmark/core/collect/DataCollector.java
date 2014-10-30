@@ -1,29 +1,32 @@
 package org.metaborg.spoofax.benchmark.core.collect;
 
-import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.metaborg.runtime.task.engine.TaskManager;
+import org.metaborg.spoofax.core.language.ILanguage;
+import org.metaborg.spoofax.core.language.ILanguageIdentifierService;
 import org.metaborg.spoofax.core.language.ILanguageService;
+import org.metaborg.spoofax.core.language.LanguageFileSelector;
+import org.metaborg.spoofax.core.messages.IMessage;
+import org.metaborg.spoofax.core.parser.IParseService;
+import org.metaborg.spoofax.core.parser.ParseResult;
+import org.metaborg.spoofax.core.resource.IResourceService;
 import org.metaborg.sunshine.environment.ServiceRegistry;
 import org.metaborg.sunshine.environment.SunshineMainArguments;
-import org.metaborg.sunshine.model.messages.IMessage;
 import org.metaborg.sunshine.services.analyzer.AnalysisFileResult;
 import org.metaborg.sunshine.services.analyzer.AnalysisResult;
 import org.metaborg.sunshine.services.analyzer.AnalysisService;
-import org.metaborg.sunshine.services.parser.ParserService;
 import org.spoofax.interpreter.library.IOAgent;
 import org.spoofax.interpreter.library.index.IndexManager;
+import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.interpreter.terms.ITermFactory;
 import org.spoofax.terms.attachments.TermAttachmentStripper;
 
@@ -55,8 +58,8 @@ public final class DataCollector {
         // Setup sunshine
         org.metaborg.sunshine.drivers.Main.jc = new JCommander();
         final String[] sunshineArgs =
-            new String[] { "--project", projectDir, "--auto-lang", languageDir, "--observer", "analysis-default-cmd",
-                "--non-incremental" };
+            new String[] { "--project", projectDir, "--auto-lang", languageDir, "--observer",
+                "analysis-default-cmd", "--non-incremental" };
         final SunshineMainArguments params = new SunshineMainArguments();
         final boolean argsFine = org.metaborg.sunshine.drivers.Main.parseArguments(sunshineArgs, params);
         if(!argsFine) {
@@ -66,23 +69,26 @@ public final class DataCollector {
         org.metaborg.sunshine.drivers.Main.initEnvironment(params);
     }
 
-    public CollectedData collect(int warmupPhases, int measurementPhases) {
+    public CollectedData collect(int warmupPhases, int measurementPhases) throws IOException {
         final ServiceRegistry services = ServiceRegistry.INSTANCE();
+        final IResourceService resources = services.getService(IResourceService.class);
         final ILanguageService languages = services.getService(ILanguageService.class);
-        final ParserService parser = services.getService(ParserService.class);
+        final ILanguageIdentifierService identifier = services.getService(ILanguageIdentifierService.class);
+        @SuppressWarnings("unchecked") final IParseService<IStrategoTerm> parser =
+            services.getService(IParseService.class);
         final AnalysisService analyzer = services.getService(AnalysisService.class);
 
-        final IOFileFilter extensionFilter = createExtensionFilter(languages.get(languageName).extensions());
-        final Collection<File> files =
-            FileUtils.listFiles(new File(projectDir), extensionFilter, TrueFileFilter.INSTANCE);
+        final ILanguage language = languages.get(languageName);
+        final FileObject[] files =
+            resources.resolve(projectDir).findFiles(new LanguageFileSelector(identifier, language));
 
         for(int i = 0; i < warmupPhases; ++i) {
-            analyze(parser, analyzer, files);
+            analyze(parser, analyzer, language, files);
         }
 
         final List<AnalysisResult> allResults = Lists.newLinkedList();
         for(int i = 0; i < measurementPhases; ++i) {
-            final Collection<AnalysisResult> results = analyze(parser, analyzer, files);
+            final Collection<AnalysisResult> results = analyze(parser, analyzer, language, files);
             // Since we are only analyzing files of one language, there should only be one result in results.
             allResults.add(Iterables.getFirst(results, null));
         }
@@ -99,7 +105,7 @@ public final class DataCollector {
         final TermAttachmentStripper attachmentStripper = new TermAttachmentStripper(termFactory);
         for(final AnalysisFileResult fileResult : firstResult.fileResults) {
             final FileData fileData = new FileData();
-            fileData.name = fileResult.file().getAbsolutePath();
+            fileData.name = fileResult.file().getName().getPath();
             fileData.ast = attachmentStripper.strip(fileResult.ast());
             for(IMessage message : fileResult.messages()) {
                 fileData.messages.add(message.message());
@@ -108,7 +114,8 @@ public final class DataCollector {
         }
 
         final IndexManager indexManager = IndexManager.getInstance();
-        data.indexFile = indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).getAbsolutePath();
+        data.indexFile =
+            indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).getAbsolutePath();
         data.index = indexManager.loadIndex(projectDir, languageName, termFactory, agent);
 
         final TaskManager taskManager = TaskManager.getInstance();
@@ -131,26 +138,18 @@ public final class DataCollector {
         return data;
     }
 
-    private Collection<AnalysisResult> analyze(ParserService parser, AnalysisService analyzer, Collection<File> files) {
+    private Collection<AnalysisResult> analyze(IParseService<IStrategoTerm> parser, AnalysisService analyzer,
+        ILanguage language, FileObject[] files) throws IOException {
         resetIndex();
         resetTaskEngine();
         forceGC();
 
-        final Collection<AnalysisFileResult> parseResults = Lists.newLinkedList();
-        for(File file : files) {
-            parseResults.add(parser.parseFile(file));
+        final Collection<ParseResult<IStrategoTerm>> parseResults = Lists.newLinkedList();
+        for(FileObject file : files) {
+            parseResults.add(parser.parse(file, language));
         }
 
         return analyzer.analyze(parseResults);
-    }
-
-    private IOFileFilter createExtensionFilter(Iterable<String> extensions) {
-        final IOFileFilter[] filters = new IOFileFilter[Iterables.size(extensions)];
-        int i = 0;
-        for(String extension : extensions) {
-            filters[i++] = FileFilterUtils.suffixFileFilter(extension);
-        }
-        return FileFilterUtils.or(filters);
     }
 
     private void resetIndex() {
