@@ -32,7 +32,6 @@ import org.spoofax.terms.attachments.TermAttachmentStripper;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.internal.Lists;
-import com.google.common.collect.Iterables;
 import com.google.inject.TypeLiteral;
 
 public final class DataCollector {
@@ -90,10 +89,9 @@ public final class DataCollector {
 
         final List<AnalysisResult<IStrategoTerm, IStrategoTerm>> allResults = Lists.newLinkedList();
         for(int i = 0; i < measurementPhases; ++i) {
-            final Collection<AnalysisResult<IStrategoTerm, IStrategoTerm>> results =
+            final AnalysisResult<IStrategoTerm, IStrategoTerm> result =
                 analyze(parser, analyzer, language, files);
-            // Since we are only analyzing files of one language, there should only be one result in results.
-            allResults.add(Iterables.getFirst(results, null));
+            allResults.add(result);
         }
         if(allResults.size() == 0)
             throw new RuntimeException("Could not analyze files.");
@@ -141,9 +139,9 @@ public final class DataCollector {
         return data;
     }
 
-    private Collection<AnalysisResult<IStrategoTerm, IStrategoTerm>> analyze(
-        IParseService<IStrategoTerm> parser, IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer,
-        ILanguage language, FileObject[] files) throws IOException {
+    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(IParseService<IStrategoTerm> parser,
+        IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer, ILanguage language, FileObject[] files)
+        throws IOException {
         resetIndex();
         resetTaskEngine();
         forceGC();
@@ -153,7 +151,7 @@ public final class DataCollector {
             parseResults.add(parser.parse(file, language));
         }
 
-        return analyzer.analyze(parseResults);
+        return analyzer.analyze(parseResults, language);
     }
 
     private void resetIndex() {
