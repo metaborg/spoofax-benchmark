@@ -19,9 +19,9 @@ import org.metaborg.spoofax.core.language.ILanguageIdentifierService;
 import org.metaborg.spoofax.core.language.ILanguageService;
 import org.metaborg.spoofax.core.language.LanguageFileSelector;
 import org.metaborg.spoofax.core.messages.IMessage;
-import org.metaborg.spoofax.core.parser.IParseService;
-import org.metaborg.spoofax.core.parser.ParseResult;
 import org.metaborg.spoofax.core.resource.IResourceService;
+import org.metaborg.spoofax.core.syntax.ISyntaxService;
+import org.metaborg.spoofax.core.syntax.ParseResult;
 import org.metaborg.sunshine.environment.ServiceRegistry;
 import org.metaborg.sunshine.environment.SunshineMainArguments;
 import org.spoofax.interpreter.library.IOAgent;
@@ -74,8 +74,8 @@ public final class DataCollector {
         final IResourceService resources = services.getService(IResourceService.class);
         final ILanguageService languages = services.getService(ILanguageService.class);
         final ILanguageIdentifierService identifier = services.getService(ILanguageIdentifierService.class);
-        final IParseService<IStrategoTerm> parser =
-            services.getService(new TypeLiteral<IParseService<IStrategoTerm>>() {});
+        final ISyntaxService<IStrategoTerm> parser =
+            services.getService(new TypeLiteral<ISyntaxService<IStrategoTerm>>() {});
         final IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer =
             services.getService(new TypeLiteral<IAnalysisService<IStrategoTerm, IStrategoTerm>>() {});
 
@@ -139,7 +139,7 @@ public final class DataCollector {
         return data;
     }
 
-    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(IParseService<IStrategoTerm> parser,
+    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(ISyntaxService<IStrategoTerm> parser,
         IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer, ILanguage language, FileObject[] files)
         throws IOException {
         resetIndex();
