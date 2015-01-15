@@ -22,6 +22,7 @@ import org.metaborg.spoofax.core.messages.IMessage;
 import org.metaborg.spoofax.core.resource.IResourceService;
 import org.metaborg.spoofax.core.syntax.ISyntaxService;
 import org.metaborg.spoofax.core.syntax.ParseResult;
+import org.metaborg.spoofax.core.text.ISourceTextService;
 import org.metaborg.sunshine.environment.ServiceRegistry;
 import org.metaborg.sunshine.environment.SunshineMainArguments;
 import org.spoofax.interpreter.library.IOAgent;
@@ -74,6 +75,7 @@ public final class DataCollector {
         final IResourceService resources = services.getService(IResourceService.class);
         final ILanguageService languages = services.getService(ILanguageService.class);
         final ILanguageIdentifierService identifier = services.getService(ILanguageIdentifierService.class);
+        final ISourceTextService sourceText = services.getService(ISourceTextService.class);
         final ISyntaxService<IStrategoTerm> parser =
             services.getService(new TypeLiteral<ISyntaxService<IStrategoTerm>>() {});
         final IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer =
@@ -84,13 +86,13 @@ public final class DataCollector {
             resources.resolve(projectDir).findFiles(new LanguageFileSelector(identifier, language));
 
         for(int i = 0; i < warmupPhases; ++i) {
-            analyze(parser, analyzer, language, files);
+            analyze(sourceText, parser, analyzer, language, files);
         }
 
         final List<AnalysisResult<IStrategoTerm, IStrategoTerm>> allResults = Lists.newLinkedList();
         for(int i = 0; i < measurementPhases; ++i) {
             final AnalysisResult<IStrategoTerm, IStrategoTerm> result =
-                analyze(parser, analyzer, language, files);
+                analyze(sourceText, parser, analyzer, language, files);
             allResults.add(result);
         }
         if(allResults.size() == 0)
@@ -139,16 +141,16 @@ public final class DataCollector {
         return data;
     }
 
-    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(ISyntaxService<IStrategoTerm> parser,
-        IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer, ILanguage language, FileObject[] files)
-        throws IOException {
+    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(ISourceTextService sourceText,
+        ISyntaxService<IStrategoTerm> parser, IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer,
+        ILanguage language, FileObject[] files) throws IOException {
         resetIndex();
         resetTaskEngine();
         forceGC();
 
         final Collection<ParseResult<IStrategoTerm>> parseResults = Lists.newLinkedList();
         for(FileObject file : files) {
-            parseResults.add(parser.parse(file, language));
+            parseResults.add(parser.parse(sourceText.text(file), file, language));
         }
 
         return analyzer.analyze(parseResults, language);
