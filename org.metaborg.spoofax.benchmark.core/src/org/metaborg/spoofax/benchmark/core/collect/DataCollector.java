@@ -14,6 +14,7 @@ import org.metaborg.runtime.task.engine.TaskManager;
 import org.metaborg.spoofax.core.analysis.AnalysisFileResult;
 import org.metaborg.spoofax.core.analysis.AnalysisResult;
 import org.metaborg.spoofax.core.analysis.IAnalysisService;
+import org.metaborg.spoofax.core.context.SpoofaxContext;
 import org.metaborg.spoofax.core.language.ILanguage;
 import org.metaborg.spoofax.core.language.ILanguageIdentifierService;
 import org.metaborg.spoofax.core.language.ILanguageService;
@@ -82,17 +83,17 @@ public final class DataCollector {
             services.getService(new TypeLiteral<IAnalysisService<IStrategoTerm, IStrategoTerm>>() {});
 
         final ILanguage language = languages.get(languageName);
-        final FileObject[] files =
-            resources.resolve(projectDir).findFiles(new LanguageFileSelector(identifier, language));
+        final FileObject projectLoc = resources.resolve(projectDir);
+        final FileObject[] files = projectLoc.findFiles(new LanguageFileSelector(identifier, language));
 
         for(int i = 0; i < warmupPhases; ++i) {
-            analyze(sourceText, parser, analyzer, language, files);
+            analyze(sourceText, parser, analyzer, language, projectLoc, files);
         }
 
         final List<AnalysisResult<IStrategoTerm, IStrategoTerm>> allResults = Lists.newLinkedList();
         for(int i = 0; i < measurementPhases; ++i) {
             final AnalysisResult<IStrategoTerm, IStrategoTerm> result =
-                analyze(sourceText, parser, analyzer, language, files);
+                analyze(sourceText, parser, analyzer, language, projectLoc, files);
             allResults.add(result);
         }
         if(allResults.size() == 0)
@@ -143,7 +144,7 @@ public final class DataCollector {
 
     private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(ISourceTextService sourceText,
         ISyntaxService<IStrategoTerm> parser, IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer,
-        ILanguage language, FileObject[] files) throws IOException {
+        ILanguage language, FileObject projectLoc, FileObject[] files) throws IOException {
         resetIndex();
         resetTaskEngine();
         forceGC();
@@ -153,7 +154,7 @@ public final class DataCollector {
             parseResults.add(parser.parse(sourceText.text(file), file, language));
         }
 
-        return analyzer.analyze(parseResults, language);
+        return analyzer.analyze(parseResults, new SpoofaxContext(language, projectLoc));
     }
 
     private void resetIndex() {
