@@ -6,10 +6,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.metaborg.runtime.task.engine.TaskManager;
 import org.metaborg.spoofax.core.analysis.AnalysisFileResult;
 import org.metaborg.spoofax.core.analysis.AnalysisResult;
@@ -51,17 +47,11 @@ public final class DataCollector {
         this.agent = agent;
         this.termFactory = termFactory;
 
-        // Make logger stfu
-        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        LoggerConfig logger = ctx.getConfiguration().getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
-        logger.setLevel(Level.ERROR);
-        ctx.updateLoggers();
-
         // Setup sunshine
         org.metaborg.sunshine.drivers.Main.jc = new JCommander();
         final String[] sunshineArgs =
-            new String[] { "--project", projectDir, "--auto-lang", languageDir, "--observer",
-                "analysis-default-cmd", "--non-incremental" };
+            new String[] { "--project", projectDir, "--auto-lang", languageDir, "--observer", "analysis-default-cmd",
+                "--non-incremental" };
         final SunshineMainArguments params = new SunshineMainArguments();
         final boolean argsFine = org.metaborg.sunshine.drivers.Main.parseArguments(sunshineArgs, params);
         if(!argsFine) {
@@ -118,8 +108,7 @@ public final class DataCollector {
         }
 
         final IndexManager indexManager = IndexManager.getInstance();
-        data.indexFile =
-            indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).getAbsolutePath();
+        data.indexFile = indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).getAbsolutePath();
         data.index = indexManager.loadIndex(projectDir, languageName, termFactory, agent);
 
         final TaskManager taskManager = TaskManager.getInstance();
