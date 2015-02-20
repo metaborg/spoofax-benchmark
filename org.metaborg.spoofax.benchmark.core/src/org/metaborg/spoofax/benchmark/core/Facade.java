@@ -12,6 +12,8 @@ import org.metaborg.spoofax.benchmark.core.export.single.ImageSingleExporter;
 import org.metaborg.spoofax.benchmark.core.process.DataProcessor;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedDataSerializer;
+import org.metaborg.spoofax.core.analysis.AnalysisException;
+import org.metaborg.spoofax.core.syntax.ParseException;
 import org.spoofax.interpreter.library.IOAgent;
 import org.spoofax.interpreter.terms.ITermFactory;
 import org.spoofax.jsglr.client.imploder.ImploderOriginTermFactory;
@@ -40,10 +42,9 @@ public final class Facade {
     }
 
 
-    public CollectedData collect(String languageDir, String languageName, String projectDir,
-        int warmupPhases, int measurementPhases) throws IOException {
-        final DataCollector collector =
-            new DataCollector(languageDir, languageName, projectDir, agent, termFactory);
+    public CollectedData collect(String languageDir, String languageName, String projectDir, int warmupPhases,
+        int measurementPhases) throws IOException, ParseException, AnalysisException {
+        final DataCollector collector = new DataCollector(languageDir, languageName, projectDir, agent, termFactory);
         return collector.collect(warmupPhases, measurementPhases);
     }
 
@@ -51,8 +52,8 @@ public final class Facade {
         collectedSerializer.serialize(data, serializeDirectory);
     }
 
-    public void collectAndSerialize(String languageDir, String languageName, String projectDir,
-        int warmupPhases, int measurementPhases, File serializeDirectory) throws IOException {
+    public void collectAndSerialize(String languageDir, String languageName, String projectDir, int warmupPhases,
+        int measurementPhases, File serializeDirectory) throws IOException, ParseException, AnalysisException {
         serializeCollected(collect(languageDir, languageName, projectDir, warmupPhases, measurementPhases),
             serializeDirectory);
     }
@@ -62,8 +63,8 @@ public final class Facade {
     }
 
 
-    public ProcessedData process(CollectedData collectedData, boolean processTimeData,
-        boolean processIndexData, boolean processTaskEngineData) {
+    public ProcessedData process(CollectedData collectedData, boolean processTimeData, boolean processIndexData,
+        boolean processTaskEngineData) {
         return processor.process(collectedData, processTimeData, processIndexData, processTaskEngineData);
     }
 
@@ -71,8 +72,8 @@ public final class Facade {
         processedSerializer.serialize(data, serializeFilename);
     }
 
-    public ProcessedData processAndSerialize(CollectedData data, boolean processTimeData,
-        boolean processIndexData, boolean processTaskEngineData, File serializeFilename) throws IOException {
+    public ProcessedData processAndSerialize(CollectedData data, boolean processTimeData, boolean processIndexData,
+        boolean processTaskEngineData, File serializeFilename) throws IOException {
         final ProcessedData processedData =
             processor.process(data, processTimeData, processIndexData, processTaskEngineData);
         serializeProcessed(processedData, serializeFilename);
@@ -99,8 +100,7 @@ public final class Facade {
     }
 
 
-    public void exportHistoryImage(Iterable<ProcessedData> historicalData, File exportDirectory)
-        throws IOException {
+    public void exportHistoryImage(Iterable<ProcessedData> historicalData, File exportDirectory) throws IOException {
         imageHistoryExporter.export(historicalData, exportDirectory);
     }
 }

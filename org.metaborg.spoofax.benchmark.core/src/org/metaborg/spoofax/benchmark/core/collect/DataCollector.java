@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.metaborg.runtime.task.engine.TaskManager;
+import org.metaborg.spoofax.core.analysis.AnalysisException;
 import org.metaborg.spoofax.core.analysis.AnalysisFileResult;
 import org.metaborg.spoofax.core.analysis.AnalysisResult;
 import org.metaborg.spoofax.core.analysis.IAnalysisService;
@@ -18,6 +19,7 @@ import org.metaborg.spoofax.core.language.LanguageFileSelector;
 import org.metaborg.spoofax.core.messages.IMessage;
 import org.metaborg.spoofax.core.resource.IResourceService;
 import org.metaborg.spoofax.core.syntax.ISyntaxService;
+import org.metaborg.spoofax.core.syntax.ParseException;
 import org.metaborg.spoofax.core.syntax.ParseResult;
 import org.metaborg.spoofax.core.text.ISourceTextService;
 import org.metaborg.sunshine.environment.ServiceRegistry;
@@ -61,7 +63,8 @@ public final class DataCollector {
         org.metaborg.sunshine.drivers.Main.initEnvironment(params);
     }
 
-    public CollectedData collect(int warmupPhases, int measurementPhases) throws IOException {
+    public CollectedData collect(int warmupPhases, int measurementPhases) throws ParseException, IOException,
+        AnalysisException {
         final ServiceRegistry services = ServiceRegistry.INSTANCE();
         final IResourceService resources = services.getService(IResourceService.class);
         final ILanguageService languages = services.getService(ILanguageService.class);
@@ -133,7 +136,8 @@ public final class DataCollector {
 
     private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(ISourceTextService sourceText,
         ISyntaxService<IStrategoTerm> parser, IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer,
-        ILanguage language, FileObject projectLoc, FileObject[] files) throws IOException {
+        ILanguage language, FileObject projectLoc, FileObject[] files) throws ParseException, IOException,
+        AnalysisException {
         resetIndex();
         resetTaskEngine();
         forceGC();
