@@ -11,6 +11,7 @@ import org.metaborg.spoofax.core.analysis.AnalysisException;
 import org.metaborg.spoofax.core.analysis.AnalysisFileResult;
 import org.metaborg.spoofax.core.analysis.AnalysisResult;
 import org.metaborg.spoofax.core.analysis.IAnalysisService;
+import org.metaborg.spoofax.core.context.ContextIdentifier;
 import org.metaborg.spoofax.core.context.SpoofaxContext;
 import org.metaborg.spoofax.core.language.ILanguage;
 import org.metaborg.spoofax.core.language.ILanguageIdentifierService;
@@ -147,7 +148,7 @@ public final class DataCollector {
             parseResults.add(parser.parse(sourceText.text(file), file, language));
         }
 
-        return analyzer.analyze(parseResults, new SpoofaxContext(language, projectLoc));
+        return analyzer.analyze(parseResults, new SpoofaxContext(new ContextIdentifier(projectLoc, language)));
     }
 
     private void resetIndex() {
