@@ -103,9 +103,9 @@ public final class DataCollector {
         final TermAttachmentStripper attachmentStripper = new TermAttachmentStripper(termFactory);
         for(final AnalysisFileResult<IStrategoTerm, IStrategoTerm> fileResult : firstResult.fileResults) {
             final FileData fileData = new FileData();
-            fileData.name = fileResult.file().getName().getPath();
-            fileData.ast = attachmentStripper.strip(fileResult.result());
-            for(IMessage message : fileResult.messages()) {
+            fileData.name = fileResult.source.getName().getPath();
+            fileData.ast = attachmentStripper.strip(fileResult.result);
+            for(IMessage message : fileResult.messages) {
                 fileData.messages.add(message.message());
             }
             data.files.add(fileData);
