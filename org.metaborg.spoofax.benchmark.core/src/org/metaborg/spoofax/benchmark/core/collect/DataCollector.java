@@ -81,13 +81,13 @@ public final class DataCollector {
         final FileObject[] files = projectLoc.findFiles(new LanguageFileSelector(identifier, language));
 
         for(int i = 0; i < warmupPhases; ++i) {
-            analyze(sourceText, parser, analyzer, language, projectLoc, files);
+            analyze(resources, sourceText, parser, analyzer, language, projectLoc, files);
         }
 
         final List<AnalysisResult<IStrategoTerm, IStrategoTerm>> allResults = Lists.newLinkedList();
         for(int i = 0; i < measurementPhases; ++i) {
             final AnalysisResult<IStrategoTerm, IStrategoTerm> result =
-                analyze(sourceText, parser, analyzer, language, projectLoc, files);
+                analyze(resources, sourceText, parser, analyzer, language, projectLoc, files);
             allResults.add(result);
         }
         if(allResults.size() == 0)
@@ -135,10 +135,10 @@ public final class DataCollector {
         return data;
     }
 
-    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(ISourceTextService sourceText,
-        ISyntaxService<IStrategoTerm> parser, IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer,
-        ILanguage language, FileObject projectLoc, FileObject[] files) throws ParseException, IOException,
-        AnalysisException {
+    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(IResourceService resources,
+        ISourceTextService sourceText, ISyntaxService<IStrategoTerm> parser,
+        IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer, ILanguage language, FileObject projectLoc,
+        FileObject[] files) throws ParseException, IOException, AnalysisException {
         resetIndex();
         resetTaskEngine();
         forceGC();
@@ -148,7 +148,8 @@ public final class DataCollector {
             parseResults.add(parser.parse(sourceText.text(file), file, language));
         }
 
-        return analyzer.analyze(parseResults, new SpoofaxContext(new ContextIdentifier(projectLoc, language)));
+        return analyzer.analyze(parseResults,
+            new SpoofaxContext(resources, new ContextIdentifier(projectLoc, language)));
     }
 
     private void resetIndex() {
