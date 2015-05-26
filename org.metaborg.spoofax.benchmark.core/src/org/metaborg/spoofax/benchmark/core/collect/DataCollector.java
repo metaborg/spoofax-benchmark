@@ -145,7 +145,7 @@ public final class DataCollector {
 
         final Collection<ParseResult<IStrategoTerm>> parseResults = Lists.newLinkedList();
         for(FileObject file : files) {
-            parseResults.add(parser.parse(sourceText.text(file), file, language));
+            parseResults.add(parser.parse(sourceText.text(file), file, language, null));
         }
 
         return analyzer.analyze(parseResults,
