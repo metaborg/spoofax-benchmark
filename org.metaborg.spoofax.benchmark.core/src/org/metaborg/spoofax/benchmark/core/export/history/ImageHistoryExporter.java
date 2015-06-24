@@ -21,68 +21,47 @@ import org.metaborg.spoofax.benchmark.core.util.MathLongList;
 import com.beust.jcommander.internal.Maps;
 
 public class ImageHistoryExporter {
-	public void export(Iterable<ProcessedData> historicalData, File directory) throws IOException {
-		writeXYPlot(createTimeDataset(historicalData), new File(directory, "time.png"), "Speed of analysis over time",
-			"Datapoint", "Time in seconds");
+    public void export(Iterable<ProcessedData> historicalData, File directory) throws IOException {
+        writeXYPlot(createTimeDataset(historicalData), new File(directory, "time.png"), "Speed of analysis over time",
+            "Datapoint", "Time in seconds");
+    }
 
-		// size over time
+    private XYSeriesCollection createTimeDataset(Iterable<ProcessedData> historicalData) {
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        final Map<String, XYSeries> allSeries = Maps.newHashMap();
 
+        int i = 1;
+        for(ProcessedData data : historicalData) {
+            for(Entry<String, MathLongList> entry : data.time.map.entrySet()) {
+                XYSeries series = allSeries.get(entry.getKey());
+                if(series == null) {
+                    series = new XYSeries(entry.getKey());
+                    dataset.addSeries(series);
+                }
+                series.add(i, entry.getValue().mean());
+            }
+            ++i;
+        }
 
-	}
+        return dataset;
+    }
 
-	private XYSeriesCollection createTimeDataset(Iterable<ProcessedData> historicalData) {
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-		final Map<String, XYSeries> allSeries = Maps.newHashMap();
+    private void writeXYPlot(XYSeriesCollection dataset, File file, String title, String xName, String yName)
+        throws IOException {
+        final JFreeChart chart =
+            ChartFactory.createXYLineChart(title, xName, yName, dataset, PlotOrientation.VERTICAL, true, true, false);
+        final XYPlot plot = (XYPlot) chart.getPlot();
 
-		int i = 1;
-		for(ProcessedData data : historicalData) {
-			for(Entry<String, MathLongList> entry : data.time.map.entrySet()) {
-				XYSeries series = allSeries.get(entry.getKey());
-				if(series == null) {
-					series = new XYSeries(entry.getKey());
-					dataset.addSeries(series);
-				}
-				series.add(i, entry.getValue().mean());
-			}
-			++i;
-		}
+        final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        for(int i = 0; i < dataset.getSeriesCount(); ++i) {
+            renderer.setSeriesShapesVisible(i, true);
+            renderer.setSeriesStroke(i, new BasicStroke(2));
+        }
+        plot.setRenderer(renderer);
 
-		return dataset;
-	}
+        final NumberAxis valueAxis = (NumberAxis) plot.getDomainAxis();
+        valueAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-	private void createMapsDataset(Iterable<Map<String, Number>> maps) {
-		final Map<String, XYSeries> allSeries = Maps.newHashMap();
-		int i = 1;
-		for(final Map<String, Number> map : maps) {
-			for(final Entry<String, Number> entry : map.entrySet()) {
-				XYSeries series = allSeries.get(entry.getKey());
-				if(series == null) {
-					series = new XYSeries(entry.getKey());
-					allSeries.put(entry.getKey(), series);
-				}
-
-				series.add(i, entry.getValue());
-			}
-			++i;
-		}
-	}
-
-	private void writeXYPlot(XYSeriesCollection dataset, File file, String title, String xName, String yName)
-		throws IOException {
-		final JFreeChart chart =
-			ChartFactory.createXYLineChart(title, xName, yName, dataset, PlotOrientation.VERTICAL, true, true, false);
-		final XYPlot plot = (XYPlot) chart.getPlot();
-
-		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-		for(int i = 0; i < dataset.getSeriesCount(); ++i) {
-			renderer.setSeriesShapesVisible(i, true);
-			renderer.setSeriesStroke(i, new BasicStroke(2));
-		}
-		plot.setRenderer(renderer);
-
-		final NumberAxis valueAxis = (NumberAxis) plot.getDomainAxis();
-		valueAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-		ChartUtilities.saveChartAsPNG(file, chart, 800, 600);
-	}
+        ChartUtilities.saveChartAsPNG(file, chart, 800, 600);
+    }
 }
