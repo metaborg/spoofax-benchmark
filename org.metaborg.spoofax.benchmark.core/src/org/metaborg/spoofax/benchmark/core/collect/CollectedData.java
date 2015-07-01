@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.metaborg.runtime.task.engine.ITaskEngine;
-import org.metaborg.spoofax.core.analysis.AnalysisDebugResult;
+import org.metaborg.spoofax.core.analysis.stratego.AnalysisDebugResult;
 import org.spoofax.interpreter.library.index.IIndex;
 
 import com.google.common.collect.Lists;

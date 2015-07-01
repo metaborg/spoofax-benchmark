@@ -11,6 +11,8 @@ import org.metaborg.spoofax.core.analysis.AnalysisException;
 import org.metaborg.spoofax.core.analysis.AnalysisFileResult;
 import org.metaborg.spoofax.core.analysis.AnalysisResult;
 import org.metaborg.spoofax.core.analysis.IAnalysisService;
+import org.metaborg.spoofax.core.analysis.stratego.AnalysisTimeResult;
+import org.metaborg.spoofax.core.analysis.stratego.StrategoAnalyzerData;
 import org.metaborg.spoofax.core.context.ContextIdentifier;
 import org.metaborg.spoofax.core.context.SpoofaxContext;
 import org.metaborg.spoofax.core.language.ILanguage;
@@ -120,16 +122,19 @@ public final class DataCollector {
             taskManager.getTaskEngineFile(taskManager.getProjectURI(projectDir, agent)).getAbsolutePath();
         data.taskEngine = taskManager.loadTaskEngine(projectDir, termFactory, agent);
 
-        data.debug = firstResult.debugResult;
+        final StrategoAnalyzerData firstAnalyzerData = (StrategoAnalyzerData) firstResult.analyzerData;
+        data.debug = firstAnalyzerData.debugResult;
 
         for(final AnalysisResult<IStrategoTerm, IStrategoTerm> result : allResults) {
-            data.time.add("Parse", result.timeResult.parse);
-            data.time.add("Pre-trans", result.timeResult.preTrans);
-            data.time.add("Collect", result.timeResult.collect);
-            data.time.add("Task eval", result.timeResult.taskEval);
-            data.time.add("Post-trans", result.timeResult.postTrans);
-            data.time.add("Index persist", result.timeResult.indexPersist);
-            data.time.add("Task engine persist", result.timeResult.taskPersist);
+            final StrategoAnalyzerData analyzerData = (StrategoAnalyzerData) result.analyzerData;
+            final AnalysisTimeResult timeResult = analyzerData.timeResult;
+            data.time.add("Parse", timeResult.parse);
+            data.time.add("Pre-trans", timeResult.preTrans);
+            data.time.add("Collect", timeResult.collect);
+            data.time.add("Task eval", timeResult.taskEval);
+            data.time.add("Post-trans", timeResult.postTrans);
+            data.time.add("Index persist", timeResult.indexPersist);
+            data.time.add("Task engine persist", timeResult.taskPersist);
         }
 
         return data;
