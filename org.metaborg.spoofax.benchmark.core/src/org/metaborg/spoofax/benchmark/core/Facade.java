@@ -3,6 +3,8 @@ package org.metaborg.spoofax.benchmark.core;
 import java.io.File;
 import java.io.IOException;
 
+import org.metaborg.core.analysis.AnalysisException;
+import org.metaborg.core.syntax.ParseException;
 import org.metaborg.spoofax.benchmark.core.collect.CollectedData;
 import org.metaborg.spoofax.benchmark.core.collect.CollectedDataSerializer;
 import org.metaborg.spoofax.benchmark.core.collect.DataCollector;
@@ -12,8 +14,6 @@ import org.metaborg.spoofax.benchmark.core.export.single.ImageSingleExporter;
 import org.metaborg.spoofax.benchmark.core.process.DataProcessor;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
 import org.metaborg.spoofax.benchmark.core.process.ProcessedDataSerializer;
-import org.metaborg.spoofax.core.analysis.AnalysisException;
-import org.metaborg.spoofax.core.syntax.ParseException;
 import org.spoofax.interpreter.library.IOAgent;
 import org.spoofax.interpreter.terms.ITermFactory;
 import org.spoofax.jsglr.client.imploder.ImploderOriginTermFactory;
