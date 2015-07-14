@@ -153,8 +153,8 @@ public final class DataCollector {
             parseResults.add(parser.parse(sourceText.text(file), file, language, null));
         }
 
-        return analyzer.analyze(parseResults,
-            new SpoofaxContext(resources, new ContextIdentifier(projectLoc, language)));
+        return analyzer.analyze(parseResults, new SpoofaxContext(resources,
+            new ContextIdentifier(projectLoc, language), ServiceRegistry.INSTANCE().injector()));
     }
 
     private void resetIndex() {
