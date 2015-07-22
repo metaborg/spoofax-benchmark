@@ -11,7 +11,7 @@ import org.metaborg.core.analysis.AnalysisFileResult;
 import org.metaborg.core.analysis.AnalysisResult;
 import org.metaborg.core.analysis.IAnalysisService;
 import org.metaborg.core.context.ContextIdentifier;
-import org.metaborg.core.language.ILanguage;
+import org.metaborg.core.language.ILanguageImpl;
 import org.metaborg.core.language.ILanguageIdentifierService;
 import org.metaborg.core.language.ILanguageService;
 import org.metaborg.core.language.LanguageFileSelector;
@@ -78,7 +78,7 @@ public final class DataCollector {
         final IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer =
             services.getService(new TypeLiteral<IAnalysisService<IStrategoTerm, IStrategoTerm>>() {});
 
-        final ILanguage language = languages.get(languageName);
+        final ILanguageImpl language = languages.get(languageName);
         final FileObject projectLoc = resources.resolve(projectDir);
         final FileObject[] files = projectLoc.findFiles(new LanguageFileSelector(identifier, language));
 
@@ -142,7 +142,7 @@ public final class DataCollector {
 
     private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(IResourceService resources,
         ISourceTextService sourceText, ISyntaxService<IStrategoTerm> parser,
-        IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer, ILanguage language, FileObject projectLoc,
+        IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer, ILanguageImpl language, FileObject projectLoc,
         FileObject[] files) throws ParseException, IOException, AnalysisException {
         resetIndex();
         resetTaskEngine();
