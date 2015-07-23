@@ -78,7 +78,7 @@ public final class DataCollector {
         final IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer =
             services.getService(new TypeLiteral<IAnalysisService<IStrategoTerm, IStrategoTerm>>() {});
 
-        final ILanguageImpl language = languages.get(languageName);
+        final ILanguageImpl language = languages.getLanguage(languageName);
         final FileObject projectLoc = resources.resolve(projectDir);
         final FileObject[] files = projectLoc.findFiles(new LanguageFileSelector(identifier, language));
 
