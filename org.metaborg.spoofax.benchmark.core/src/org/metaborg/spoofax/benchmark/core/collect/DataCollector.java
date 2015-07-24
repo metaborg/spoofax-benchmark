@@ -11,8 +11,9 @@ import org.metaborg.core.analysis.AnalysisFileResult;
 import org.metaborg.core.analysis.AnalysisResult;
 import org.metaborg.core.analysis.IAnalysisService;
 import org.metaborg.core.context.ContextIdentifier;
-import org.metaborg.core.language.ILanguageImpl;
+import org.metaborg.core.language.ILanguage;
 import org.metaborg.core.language.ILanguageIdentifierService;
+import org.metaborg.core.language.ILanguageImpl;
 import org.metaborg.core.language.ILanguageService;
 import org.metaborg.core.language.LanguageFileSelector;
 import org.metaborg.core.messages.IMessage;
@@ -78,18 +79,19 @@ public final class DataCollector {
         final IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer =
             services.getService(new TypeLiteral<IAnalysisService<IStrategoTerm, IStrategoTerm>>() {});
 
-        final ILanguageImpl language = languages.getLanguage(languageName);
+        final ILanguage language = languages.getLanguage(languageName);
+        final ILanguageImpl languageImpl = language.activeImpl();
         final FileObject projectLoc = resources.resolve(projectDir);
-        final FileObject[] files = projectLoc.findFiles(new LanguageFileSelector(identifier, language));
+        final FileObject[] files = projectLoc.findFiles(new LanguageFileSelector(identifier, languageImpl));
 
         for(int i = 0; i < warmupPhases; ++i) {
-            analyze(resources, sourceText, parser, analyzer, language, projectLoc, files);
+            analyze(resources, sourceText, parser, analyzer, languageImpl, projectLoc, files);
         }
 
         final List<AnalysisResult<IStrategoTerm, IStrategoTerm>> allResults = Lists.newLinkedList();
         for(int i = 0; i < measurementPhases; ++i) {
             final AnalysisResult<IStrategoTerm, IStrategoTerm> result =
-                analyze(resources, sourceText, parser, analyzer, language, projectLoc, files);
+                analyze(resources, sourceText, parser, analyzer, languageImpl, projectLoc, files);
             allResults.add(result);
         }
         if(allResults.size() == 0)
