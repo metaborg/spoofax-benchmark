@@ -11,6 +11,8 @@ import org.metaborg.core.analysis.AnalysisFileResult;
 import org.metaborg.core.analysis.AnalysisResult;
 import org.metaborg.core.analysis.IAnalysisService;
 import org.metaborg.core.context.ContextIdentifier;
+import org.metaborg.core.context.IContext;
+import org.metaborg.core.context.IContextFactory;
 import org.metaborg.core.language.ILanguage;
 import org.metaborg.core.language.ILanguageIdentifierService;
 import org.metaborg.core.language.ILanguageImpl;
@@ -25,10 +27,9 @@ import org.metaborg.core.syntax.ParseResult;
 import org.metaborg.runtime.task.engine.TaskManager;
 import org.metaborg.spoofax.core.analysis.AnalysisTimeResult;
 import org.metaborg.spoofax.core.analysis.StrategoAnalyzerData;
-import org.metaborg.spoofax.core.context.SpoofaxContext;
+import org.metaborg.spoofax.core.context.ISpoofaxContext;
 import org.metaborg.sunshine.environment.ServiceRegistry;
 import org.metaborg.sunshine.environment.SunshineMainArguments;
-import org.spoofax.interpreter.library.IOAgent;
 import org.spoofax.interpreter.library.index.IndexManager;
 import org.spoofax.interpreter.terms.IStrategoTerm;
 import org.spoofax.interpreter.terms.ITermFactory;
@@ -42,15 +43,12 @@ public final class DataCollector {
     private final String languageDir;
     private final String languageName;
     private final String projectDir;
-    private final IOAgent agent;
     private final ITermFactory termFactory;
 
-    public DataCollector(String languageDir, String languageName, String projectDir, IOAgent agent,
-        ITermFactory termFactory) {
+    public DataCollector(String languageDir, String languageName, String projectDir, ITermFactory termFactory) {
         this.languageDir = languageDir;
         this.languageName = languageName;
         this.projectDir = projectDir;
-        this.agent = agent;
         this.termFactory = termFactory;
 
         // Setup sunshine
@@ -84,14 +82,18 @@ public final class DataCollector {
         final FileObject projectLoc = resources.resolve(projectDir);
         final FileObject[] files = projectLoc.findFiles(new LanguageFileSelector(identifier, languageImpl));
 
+        final IContext context =
+            ServiceRegistry.INSTANCE().getService(IContextFactory.class)
+                .create(new ContextIdentifier(projectLoc, languageImpl));
+
         for(int i = 0; i < warmupPhases; ++i) {
-            analyze(resources, sourceText, parser, analyzer, languageImpl, projectLoc, files);
+            analyze(sourceText, parser, analyzer, languageImpl, context, files);
         }
 
         final List<AnalysisResult<IStrategoTerm, IStrategoTerm>> allResults = Lists.newLinkedList();
         for(int i = 0; i < measurementPhases; ++i) {
             final AnalysisResult<IStrategoTerm, IStrategoTerm> result =
-                analyze(resources, sourceText, parser, analyzer, languageImpl, projectLoc, files);
+                analyze(sourceText, parser, analyzer, languageImpl, context, files);
             allResults.add(result);
         }
         if(allResults.size() == 0)
@@ -115,14 +117,12 @@ public final class DataCollector {
             data.files.add(fileData);
         }
 
-        final IndexManager indexManager = IndexManager.getInstance();
-        data.indexFile = indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).getAbsolutePath();
-        data.index = indexManager.loadIndex(projectDir, languageName, termFactory, agent);
+        final ISpoofaxContext spoofaxContext = (ISpoofaxContext) context;
+        data.indexFile = IndexManager.cacheFile(context.location());
+        data.index = spoofaxContext.index();
 
-        final TaskManager taskManager = TaskManager.getInstance();
-        data.taskEngineFile =
-            taskManager.getTaskEngineFile(taskManager.getProjectURI(projectDir, agent)).getAbsolutePath();
-        data.taskEngine = taskManager.loadTaskEngine(projectDir, termFactory, agent);
+        data.taskEngineFile = TaskManager.cacheFile(context.location());
+        data.taskEngine = spoofaxContext.taskEngine();
 
         final StrategoAnalyzerData firstAnalyzerData = (StrategoAnalyzerData) firstResult.analyzerData;
         data.debug = firstAnalyzerData.debugResult;
@@ -142,12 +142,11 @@ public final class DataCollector {
         return data;
     }
 
-    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(IResourceService resources,
-        ISourceTextService sourceText, ISyntaxService<IStrategoTerm> parser,
-        IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer, ILanguageImpl language, FileObject projectLoc,
-        FileObject[] files) throws ParseException, IOException, AnalysisException {
-        resetIndex();
-        resetTaskEngine();
+    private AnalysisResult<IStrategoTerm, IStrategoTerm> analyze(ISourceTextService sourceText,
+        ISyntaxService<IStrategoTerm> parser, IAnalysisService<IStrategoTerm, IStrategoTerm> analyzer,
+        ILanguageImpl language, IContext context, FileObject[] files) throws ParseException, IOException,
+        AnalysisException {
+        context.reset();
         forceGC();
 
         final Collection<ParseResult<IStrategoTerm>> parseResults = Lists.newLinkedList();
@@ -155,20 +154,7 @@ public final class DataCollector {
             parseResults.add(parser.parse(sourceText.text(file), file, language, null));
         }
 
-        return analyzer.analyze(parseResults, new SpoofaxContext(resources,
-            new ContextIdentifier(projectLoc, language), ServiceRegistry.INSTANCE().injector()));
-    }
-
-    private void resetIndex() {
-        final IndexManager indexManager = IndexManager.getInstance();
-        indexManager.unloadIndex(projectDir, agent);
-        indexManager.getIndexFile(indexManager.getProjectURI(projectDir, agent)).delete();
-    }
-
-    private void resetTaskEngine() {
-        final TaskManager taskManager = TaskManager.getInstance();
-        taskManager.unloadTaskEngine(projectDir, agent);
-        taskManager.getTaskEngineFile(taskManager.getProjectURI(projectDir, agent)).delete();
+        return analyzer.analyze(parseResults, context);
     }
 
     private void forceGC() {

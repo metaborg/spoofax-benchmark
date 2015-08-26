@@ -3,6 +3,7 @@ package org.metaborg.spoofax.benchmark.core.collect;
 import java.io.Serializable;
 import java.util.Collection;
 
+import org.apache.commons.vfs2.FileObject;
 import org.metaborg.runtime.task.engine.ITaskEngine;
 import org.metaborg.spoofax.core.analysis.AnalysisDebugResult;
 import org.spoofax.interpreter.library.index.IIndex;
@@ -18,10 +19,10 @@ public final class CollectedData implements Serializable {
 
 	public final Collection<FileData> files = Lists.newLinkedList();
 
-	public transient String indexFile;
+	public transient FileObject indexFile;
 	public transient IIndex index;
 
-	public transient String taskEngineFile;
+	public transient FileObject taskEngineFile;
 	public transient ITaskEngine taskEngine;
 
 	public AnalysisDebugResult debug;

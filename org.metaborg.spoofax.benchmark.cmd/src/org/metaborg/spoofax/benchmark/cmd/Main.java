@@ -1,6 +1,5 @@
 package org.metaborg.spoofax.benchmark.cmd;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -9,9 +8,6 @@ import org.metaborg.spoofax.benchmark.cmd.commands.CommonArguments;
 import org.metaborg.spoofax.benchmark.cmd.commands.ExportHistoryCommand;
 import org.metaborg.spoofax.benchmark.cmd.commands.ExportSingleCommand;
 import org.metaborg.spoofax.benchmark.cmd.commands.ProcessCommand;
-import org.metaborg.spoofax.benchmark.core.Facade;
-import org.metaborg.spoofax.benchmark.core.collect.CollectedData;
-import org.metaborg.spoofax.benchmark.core.process.ProcessedData;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -48,52 +44,52 @@ public class Main {
 			}
 
 			try {
-				final Facade facade = new Facade();
-
-				switch(command) {
-					case CollectCommand.NAME: {
-						facade.collectAndSerialize(cmdSerialize.collectArguments.languageDirectory,
-							cmdSerialize.collectArguments.languageName, cmdSerialize.collectArguments.projectDirectory,
-							cmdSerialize.collectArguments.warmupPhases,
-							cmdSerialize.collectArguments.measurementPhases, new File(cmdSerialize.outputDirectory));
-						break;
-					}
-					case ProcessCommand.NAME: {
-						final CollectedData data = facade.deserializeCollected(new File(cmdProcess.inputDirectory));
-						facade.processAndSerialize(data, !cmdProcess.dontProcessTimeData,
-							!cmdProcess.dontProcessIndexData, !cmdProcess.dontProcessTaskEngineData, new File(
-								cmdProcess.outputFile));
-						break;
-					}
-					case ExportSingleCommand.NAME: {
-						final ProcessedData data = facade.deserializeProcessed(new File(cmdSingleExport.inputFile));
-						switch(cmdSingleExport.outputFormat) {
-							case "csv": {
-								facade.exportSingleCSV(data, new File(cmdSingleExport.outputDirectory));
-								break;
-							}
-							case "image": {
-								facade.exportSingleImage(data, new File(cmdSingleExport.outputDirectory));
-								break;
-							}
-						}
-
-						break;
-					}
-					case ExportHistoryCommand.NAME: {
-						final Collection<ProcessedData> historicalData = Lists.newLinkedList();
-						for(String file : cmdHistoryExport.inputFiles) {
-							historicalData.add(facade.deserializeProcessed(new File(file)));
-						}
-						switch(cmdHistoryExport.outputFormat) {
-							case "image": {
-								facade.exportHistoryImage(historicalData, new File(cmdHistoryExport.outputDirectory));
-								break;
-							}
-						}
-						break;
-					}
-				}
+                // final Facade facade = new Facade();
+                //
+                // switch(command) {
+                // case CollectCommand.NAME: {
+                // facade.collectAndSerialize(cmdSerialize.collectArguments.languageDirectory,
+                // cmdSerialize.collectArguments.languageName, cmdSerialize.collectArguments.projectDirectory,
+                // cmdSerialize.collectArguments.warmupPhases,
+                // cmdSerialize.collectArguments.measurementPhases, new File(cmdSerialize.outputDirectory));
+                // break;
+                // }
+                // case ProcessCommand.NAME: {
+                // final CollectedData data = facade.deserializeCollected(new File(cmdProcess.inputDirectory));
+                // facade.processAndSerialize(data, !cmdProcess.dontProcessTimeData,
+                // !cmdProcess.dontProcessIndexData, !cmdProcess.dontProcessTaskEngineData, new File(
+                // cmdProcess.outputFile));
+                // break;
+                // }
+                // case ExportSingleCommand.NAME: {
+                // final ProcessedData data = facade.deserializeProcessed(new File(cmdSingleExport.inputFile));
+                // switch(cmdSingleExport.outputFormat) {
+                // case "csv": {
+                // facade.exportSingleCSV(data, new File(cmdSingleExport.outputDirectory));
+                // break;
+                // }
+                // case "image": {
+                // facade.exportSingleImage(data, new File(cmdSingleExport.outputDirectory));
+                // break;
+                // }
+                // }
+                //
+                // break;
+                // }
+                // case ExportHistoryCommand.NAME: {
+                // final Collection<ProcessedData> historicalData = Lists.newLinkedList();
+                // for(String file : cmdHistoryExport.inputFiles) {
+                // historicalData.add(facade.deserializeProcessed(new File(file)));
+                // }
+                // switch(cmdHistoryExport.outputFormat) {
+                // case "image": {
+                // facade.exportHistoryImage(historicalData, new File(cmdHistoryExport.outputDirectory));
+                // break;
+                // }
+                // }
+                // break;
+                // }
+                // }
 			} catch(Exception e) {
 				error(jc, e, false);
 				return;
