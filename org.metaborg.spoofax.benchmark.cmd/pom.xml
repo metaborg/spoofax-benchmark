@@ -18,11 +18,11 @@
 			<artifactId>org.metaborg.spoofax.benchmark.core</artifactId>
 			<version>${metaborg-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.metaborg</groupId>
-			<artifactId>org.metaborg.sunshine</artifactId>
-			<version>${metaborg-version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.metaborg</groupId>
+      <artifactId>org.metaborg.sunshine.api</artifactId>
+      <version>${metaborg-version}</version>
+    </dependency>
 
 		<dependency>
 			<groupId>com.beust</groupId>
