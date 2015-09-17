@@ -25,8 +25,8 @@ import org.metaborg.core.syntax.ISyntaxService;
 import org.metaborg.core.syntax.ParseException;
 import org.metaborg.core.syntax.ParseResult;
 import org.metaborg.runtime.task.engine.TaskManager;
-import org.metaborg.spoofax.core.analysis.AnalysisTimeResult;
-import org.metaborg.spoofax.core.analysis.StrategoAnalyzerData;
+import org.metaborg.spoofax.core.analysis.taskengine.AnalysisTimeResult;
+import org.metaborg.spoofax.core.analysis.taskengine.TaskEngineAnalyzerData;
 import org.metaborg.spoofax.core.context.ISpoofaxContext;
 import org.metaborg.sunshine.environment.ServiceRegistry;
 import org.metaborg.sunshine.environment.SunshineMainArguments;
@@ -124,11 +124,11 @@ public final class DataCollector {
         data.taskEngineFile = TaskManager.cacheFile(context.location());
         data.taskEngine = spoofaxContext.taskEngine();
 
-        final StrategoAnalyzerData firstAnalyzerData = (StrategoAnalyzerData) firstResult.analyzerData;
+        final TaskEngineAnalyzerData firstAnalyzerData = (TaskEngineAnalyzerData) firstResult.analyzerData;
         data.debug = firstAnalyzerData.debugResult;
 
         for(final AnalysisResult<IStrategoTerm, IStrategoTerm> result : allResults) {
-            final StrategoAnalyzerData analyzerData = (StrategoAnalyzerData) result.analyzerData;
+            final TaskEngineAnalyzerData analyzerData = (TaskEngineAnalyzerData) result.analyzerData;
             final AnalysisTimeResult timeResult = analyzerData.timeResult;
             data.time.add("Parse", timeResult.parse);
             data.time.add("Pre-trans", timeResult.preTrans);

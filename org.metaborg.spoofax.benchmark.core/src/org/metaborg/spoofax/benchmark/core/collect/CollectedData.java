@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import org.apache.commons.vfs2.FileObject;
 import org.metaborg.runtime.task.engine.ITaskEngine;
-import org.metaborg.spoofax.core.analysis.AnalysisDebugResult;
+import org.metaborg.spoofax.core.analysis.taskengine.AnalysisDebugResult;
 import org.spoofax.interpreter.library.index.IIndex;
 
 import com.google.common.collect.Lists;
