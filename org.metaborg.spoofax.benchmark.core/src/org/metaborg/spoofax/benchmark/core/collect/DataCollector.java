@@ -27,7 +27,7 @@ import org.metaborg.core.syntax.ParseResult;
 import org.metaborg.runtime.task.engine.TaskManager;
 import org.metaborg.spoofax.core.analysis.taskengine.AnalysisTimeResult;
 import org.metaborg.spoofax.core.analysis.taskengine.TaskEngineAnalyzerData;
-import org.metaborg.spoofax.core.context.ISpoofaxContext;
+import org.metaborg.spoofax.core.context.IAnalysisContext;
 import org.metaborg.sunshine.environment.ServiceRegistry;
 import org.metaborg.sunshine.environment.SunshineMainArguments;
 import org.spoofax.interpreter.library.index.IndexManager;
@@ -117,7 +117,7 @@ public final class DataCollector {
             data.files.add(fileData);
         }
 
-        final ISpoofaxContext spoofaxContext = (ISpoofaxContext) context;
+        final IAnalysisContext spoofaxContext = (IAnalysisContext) context;
         data.indexFile = IndexManager.cacheFile(context.location());
         data.index = spoofaxContext.index();
 
